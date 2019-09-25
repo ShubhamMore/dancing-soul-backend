@@ -1,0 +1,78 @@
+const express = require('express')
+const auth = require('../middleware/auth')
+const Faculty = require('../model/faculty.model')
+const User = require('../model/user.model')
+const router = new express.Router()
+
+router.post("/addFaculty", async (req, res) =>{
+    console.log(req.body);
+    const faculty = new Faculty(req.body.faculty)
+    const user = new User(req.body.user)
+    try {
+        await user.save()
+        await faculty.save()      
+        res.status(200).send(user)  
+    } catch (e) {
+        let err = "Something bad happend";
+        if(e.code == 11000) {
+            err = "User alredy register";
+        }
+        res.status(400).send(err)
+    }
+});
+
+router.post("/getFaculties", async(req,res)=>{
+    try {
+        const faculties = await Faculty.find()
+        if(!faculties) {
+            throw new Error("No Faculty found");
+        }
+        res.status(200).send(faculties)
+    } catch (error) {
+        console.log(error)
+        res.status(401).send(error)
+    }
+});
+
+router.post("/getFaculty", async(req,res)=>{
+    try {
+        const faculty = await Faculty.findById(req.body._id)
+        if(!faculty) {
+            throw new Error("No Facultys found");
+        }
+        res.status(200).send(faculty)
+        
+    } catch (error) {
+        console.log(error)
+        res.status(401).send(error)
+    }
+});
+
+router.post("/editFaculty", async(req,res)=>{
+    try {
+
+        const faculty = await Faculty.findByIdAndUpdate(req.body._id, req.body)
+        if(!faculty) {
+            throw new Error("No Faculty found");
+        }
+        res.status(200).send(faculty)
+    } catch (error) {
+        console.log(error)
+        res.status(401).send(error)    
+    }
+});
+
+router.post("/deleteFaculty", async (req,res)=>{
+    
+    try {
+        const faculty = await Faculty.findByIdAndDelete(req.body._id) 
+        if(!faculty) {
+            throw new Error("No faculty found");
+        }  
+        res.status(200).send({success : true})
+    } catch (error) {
+        res.status(401).send(error)    
+    } 
+});
+
+module.exports = router;
