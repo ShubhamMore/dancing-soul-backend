@@ -64,6 +64,19 @@ router.post('/editStudent', async (req, res) => {
     }
 });
 
+router.post('/changeStudentStatus', async (req, res) => {
+    try {
+        const student = await Student.findByIdAndUpdate(req.body._id, {status : req.body.status});
+        if(!student) {
+            throw new Error("Student Updation Failed");
+        }
+        res.status(200).send({succes : true});
+    }
+    catch(e) {
+        res.status(400).send(""+e);
+    }
+});
+
 router.post("/deleteStudent", async (req,res)=>{
     
     try {

@@ -64,6 +64,40 @@ router.post('/editBranch', async (req, res)=>{
     } 
 });
 
+router.post('/editBranch', async (req, res)=>{
+    try {
+        const branch = await Branch.findByIdAndUpdate(req.body._id, req.body);
+        if(!branch) {
+            throw new Error("No Branch Found");
+        }
+
+        const data = {
+            success : true
+        }
+        res.status(201).send(data)
+    } catch (e) {
+        let err = "Something bad happend";
+        res.status(400).send(err)
+    } 
+});
+
+router.post('/changeBranchStatus', async (req, res)=>{
+    try {
+        const branch = await Branch.findByIdAndUpdate(req.body._id, {status : req.body.status});
+        if(!branch) {
+            throw new Error("No Branch Found");
+        }
+
+        const data = {
+            success : true
+        }
+        res.status(201).send(data)
+    } catch (e) {
+        let err = "Something bad happend";
+        res.status(400).send(err)
+    } 
+});
+
 router.post('/deleteBranch', async (req, res)=>{
     try {
         const branch = await Branch.findByIdAndDelete(req.body._id);

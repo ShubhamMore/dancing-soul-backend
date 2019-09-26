@@ -1,8 +1,9 @@
 const path = require("path");
 const express = require('express')
 const bodyParser = require("body-parser");
-require('./db/mongoose')
+require('./database/mongoose')
 
+const sendMail = require("./mail/mail")
 const aboutRouter = require('./routers/about.route')
 const articleRouter = require('./routers/article.route')
 const attendanceRouter = require('./routers/attendance.route')
@@ -51,6 +52,15 @@ app.use(newsRouter)
 app.use(receiptRouter)
 app.use(studentRouter)
 app.use(userRouter)
+
+const mail = {
+  to : "shubhammore1796@gmail.com",
+  subject : "Welcome to Nodemailer",
+  text : "Welcome Shubham",
+  html : "<b>Welcome</b>"
+}
+
+// sendMail(mail)
 
 app.listen(port, () => {
     console.log('Server is up on port ' + port)

@@ -48,6 +48,20 @@ router.post("/getFaculty", async(req,res)=>{
     }
 });
 
+router.post("/changeFacultyStatus", async(req, res)=>{
+    try {
+
+        const faculty = await Faculty.findByIdAndUpdate(req.body._id, {status : req.body.status})
+        if(!faculty) {
+            throw new Error("No Faculty found");
+        }
+        res.status(200).send(faculty)
+    } catch (error) {
+        console.log(error)
+        res.status(401).send(error)    
+    }
+});
+
 router.post("/editFaculty", async(req,res)=>{
     try {
 
