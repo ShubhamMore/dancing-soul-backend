@@ -57,6 +57,15 @@ router.post('/login', async (req, res) => {
     }
 })
 
+router.post('/autoLogin', auth, async (req, res) => {
+    try {
+        res.status(200).send({authentication : true})
+    } catch (e) {
+        let err = ""+e;
+        res.status(400).send(err.replace('Error: ', ''))
+    }
+})
+
 router.post('/forgotPassword', async (req, res) => {
     try {
 
