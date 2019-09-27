@@ -4,7 +4,7 @@ const User = require('../model/user.model')
 const auth = require('../middleware/auth')
 const router = new express.Router()
 
-router.post('/addStudent', async (req, res) => {
+router.post('/addStudent', auth, async (req, res) => {
     const student = new Student(req.body.student)
     const user = new User(req.body.user)
     try {
@@ -21,7 +21,7 @@ router.post('/addStudent', async (req, res) => {
     }
 })
 
-router.post('/getStudents', async (req, res) => {
+router.post('/getStudents', auth, async (req, res) => {
     try {
         const students = await Student.find()
         if(!students) {
@@ -34,7 +34,7 @@ router.post('/getStudents', async (req, res) => {
     }
 })
 
-router.post('/getStudent', async (req, res) => {
+router.post('/getStudent', auth, async (req, res) => {
     try {
         const student = await Student.findById(req.body._id);
         if(!student) {
@@ -51,7 +51,7 @@ router.post('/getStudent', async (req, res) => {
     }
 })
 
-router.post('/editStudent', async (req, res) => {
+router.post('/editStudent', auth, async (req, res) => {
     try {
         const student = await Student.findByIdAndUpdate(req.body._id, req.body);
         if(!student) {
@@ -64,7 +64,7 @@ router.post('/editStudent', async (req, res) => {
     }
 });
 
-router.post('/changeStudentStatus', async (req, res) => {
+router.post('/changeStudentStatus', auth, async (req, res) => {
     try {
         const student = await Student.findByIdAndUpdate(req.body._id, {status : req.body.status});
         if(!student) {
@@ -77,7 +77,7 @@ router.post('/changeStudentStatus', async (req, res) => {
     }
 });
 
-router.post("/deleteStudent", async (req,res)=>{
+router.post("/deleteStudent", auth, async (req,res)=>{
     
     try {
         const student = await Student.findByIdAndDelete(req.body._id) 

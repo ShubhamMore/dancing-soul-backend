@@ -3,7 +3,7 @@ const auth = require('../middleware/auth')
 const Enquiry = require('../model/enquiry.model')
 const router = new express.Router()
 
-router.post('/sendEnquiry', auth, async (req, res) => {
+router.post('/sendEnquiry', async (req, res) => {
 
     const enquiry = new Enquiry(req.body)
     try {
@@ -36,21 +36,21 @@ router.post('/replyEnquiry', auth, async (req, res) => {
 });
 
 
-router.post('/getEnquiries', async (req, res)=>{
+router.post('/getEnquiries', auth, async (req, res)=>{
     try {
         const enquiries = await Enquiry.find();
-        if(!enquiryes) {
+        if(!enquiries) {
             throw new Error("No Enquiry Found");
         }
 
         res.status(201).send(enquiries)
     } catch (e) {
-        let err = "Something bad happend";
+        let err = "Something bad happend " + e;
         res.status(400).send(err)
     }
 });
 
-router.post('/getEnquiry', async (req, res)=>{
+router.post('/getEnquiry', auth, async (req, res)=>{
     try {
         const enquiry = await Enquiry.findById(req.body._id);
         if(!enquiry) {

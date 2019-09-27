@@ -3,7 +3,7 @@ const auth = require('../middleware/auth')
 const Article = require('../model/article.model')
 const router = new express.Router()
 
-router.post("/addArticle", async(req, res)=>{
+router.post("/addArticle", auth, async(req, res)=>{
     const article = new Article(req.body)
     try {
         await article.save()
@@ -40,7 +40,7 @@ router.post("/getArticle", async(req,res)=>{
     }
 })
 
-router.post("/editArticle", async(req,res)=>{
+router.post("/editArticle", auth, async(req,res)=>{
     try {
         const article = await Article.findByIdAndUpdate(req.body._id, req.body)
         if(!article) {
@@ -53,7 +53,7 @@ router.post("/editArticle", async(req,res)=>{
     }
 });
 
-router.post("/deleteArticle", async(req,res)=>{
+router.post("/deleteArticle", auth, async(req,res)=>{
     
    try {
         const article = await Article.findByIdAndDelete(req.body._id) 

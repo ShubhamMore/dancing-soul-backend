@@ -3,7 +3,7 @@ const auth = require('../middleware/auth')
 const Attendance = require('../model/attendance.model')
 const router = new express.Router()
 
-router.post("/saveAttendance", async (req, res)=>{
+router.post("/saveAttendance", auth, async (req, res)=>{
     const attendance = new Attendance(req.body)
     try {
         await attendance.save()
@@ -14,7 +14,7 @@ router.post("/saveAttendance", async (req, res)=>{
     }
 });
 
-router.post("/getAttendance", async (req, res)=>{
+router.post("/getAttendance", auth, async (req, res)=>{
     try {
         const attendance = await Attendance.findById({branch : req.body.branch, batch : req.body.batch, batchType : req.body.batchType});
         if(!attendance) {

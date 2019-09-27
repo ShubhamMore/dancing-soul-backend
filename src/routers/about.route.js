@@ -3,7 +3,7 @@ const auth = require('../middleware/auth')
 const About = require('../model/about.model')
 const router = new express.Router()
 
-router.post('/addAbout', async(req, res)=>{
+router.post('/addAbout', auth, async(req, res)=>{
     const about = new About(req.body);
     try {
         await about.save();
@@ -25,7 +25,7 @@ router.post('/getAbout', async(req, res)=>{
     }   
 });
 
-router.post('/editAbout', async(req, res)=>{
+router.post('/editAbout', auth, async(req, res)=>{
     try {
         const about = await About.findByIdAndUpdate(req.body._id, req.body)
         if(!about) {

@@ -4,7 +4,7 @@ const News = require('../model/news.model')
 const router = new express.Router()
 
 
-router.post("/addNews", async (req, res) =>{
+router.post("/addNews", auth, async (req, res) =>{
     const news = new News(req.body)
     try {
         await news.save()      
@@ -42,7 +42,7 @@ router.post("/getNews", async(req,res)=>{
     }
 });
 
-router.post("/editNews", async(req, res)=>{
+router.post("/editNews", auth, async(req, res)=>{
     try {
         const news = await News.findByIdAndUpdate(req.body._id, req.body)
         if(!news) {
@@ -55,7 +55,7 @@ router.post("/editNews", async(req, res)=>{
     }
 });
 
-router.post("/deleteNews", async (req, res)=>{
+router.post("/deleteNews", auth, async (req, res)=>{
     
     try {
         const news = await News.findByIdAndDelete(req.body._id) 

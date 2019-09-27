@@ -3,7 +3,7 @@ const auth = require('../middleware/auth')
 const Exam = require('../model/exam.model')
 const router = new express.Router()
 
-router.post("/addExam", async(req, res)=>{
+router.post("/addExam", auth, async(req, res)=>{
     const exam = new Exam(req.body)
     try {
         await exam.save()
@@ -38,7 +38,7 @@ router.post("/getExam", async(req,res)=>{
     }
 })
 
-router.post("/editExam", async(req,res)=>{
+router.post("/editExam", auth, async(req,res)=>{
     try {
         const exam = await Exam.findByIdAndUpdate(req.body._id, req.body)
         if(!exam) {
@@ -50,7 +50,7 @@ router.post("/editExam", async(req,res)=>{
     }
 });
 
-router.post("/deleteExam", async(req,res)=>{
+router.post("/deleteExam", auth, async(req,res)=>{
     
    try {
         const exam = await Exam.findByIdAndDelete(req.body._id) 

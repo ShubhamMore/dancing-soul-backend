@@ -3,7 +3,7 @@ const auth = require('../middleware/auth')
 const Receipt = require('../model/receipt.model')
 const router = new express.Router()
 
-router.post("addReceipt", async (req,res) =>{
+router.post("/addReceipt", auth, async (req,res) =>{
     const receipt = new Receipt(req.body.Receipt)
     try {
         await receipt.save()      
@@ -14,7 +14,7 @@ router.post("addReceipt", async (req,res) =>{
     }
 });
 
-router.post("getReceipts", async(req, res)=>{
+router.post("/getReceipts", async(req, res)=>{
     try {
         const receipts = await Receipt.find()
         if(!receipts) {
@@ -41,7 +41,7 @@ router.post("getReceipt", async(req,res)=>{
     }
 });
 
-router.post("editReceipt", async(req,res)=>{
+router.post("editReceipt", auth, async(req,res)=>{
     try {
         const receipt = Receipt.findByIdAndUpdate(req.body._id, req.data)
         if(!receipt) {
@@ -54,7 +54,7 @@ router.post("editReceipt", async(req,res)=>{
     }
 });
 
-router.post("deleteReceipt", async (req,res)=>{
+router.post("deleteReceipt", auth, async (req,res)=>{
     
     try {
         const receipt = Receipt.findByIdAndDelete(req.body._id) 

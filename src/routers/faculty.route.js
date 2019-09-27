@@ -4,7 +4,7 @@ const Faculty = require('../model/faculty.model')
 const User = require('../model/user.model')
 const router = new express.Router()
 
-router.post("/addFaculty", async (req, res) =>{
+router.post("/addFaculty", auth, async (req, res) =>{
     console.log(req.body);
     const faculty = new Faculty(req.body.faculty)
     const user = new User(req.body.user)
@@ -21,7 +21,7 @@ router.post("/addFaculty", async (req, res) =>{
     }
 });
 
-router.post("/getFaculties", async(req,res)=>{
+router.post("/getFaculties", auth, async(req,res)=>{
     try {
         const faculties = await Faculty.find()
         if(!faculties) {
@@ -34,7 +34,20 @@ router.post("/getFaculties", async(req,res)=>{
     }
 });
 
-router.post("/getFaculty", async(req,res)=>{
+router.post("/getActivateFaculties", async(req,res)=>{
+    try {
+        const faculties = await Faculty.find({status : "1"})
+        if(!faculties) {
+            throw new Error("No Faculty found");
+        }
+        res.status(200).send(faculties)
+    } catch (error) {
+        console.log(error)
+        res.status(401).send(error)
+    }
+});
+
+router.post("/getFaculty", auth, async(req,res)=>{
     try {
         const faculty = await Faculty.findById(req.body._id)
         if(!faculty) {
@@ -48,7 +61,7 @@ router.post("/getFaculty", async(req,res)=>{
     }
 });
 
-router.post("/changeFacultyStatus", async(req, res)=>{
+router.post("/changeFacultyStatus", auth, async(req, res)=>{
     try {
 
         const faculty = await Faculty.findByIdAndUpdate(req.body._id, {status : req.body.status})
@@ -62,7 +75,7 @@ router.post("/changeFacultyStatus", async(req, res)=>{
     }
 });
 
-router.post("/editFaculty", async(req,res)=>{
+router.post("/editFaculty", auth, async(req,res)=>{
     try {
 
         const faculty = await Faculty.findByIdAndUpdate(req.body._id, req.body)
@@ -76,7 +89,7 @@ router.post("/editFaculty", async(req,res)=>{
     }
 });
 
-router.post("/deleteFaculty", async (req,res)=>{
+router.post("/deleteFaculty", auth, async (req,res)=>{
     
     try {
         const faculty = await Faculty.findByIdAndDelete(req.body._id) 
