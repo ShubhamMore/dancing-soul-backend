@@ -60,16 +60,6 @@ app.use(receiptRouter)
 app.use(studentRouter)
 app.use(userRouter)
 
-// const mail = {
-//   from : "shubhammore.developer@gmail.com",
-//   to : "shubhammore1796@gmail.com",
-//   subject : "Welcome to Nodemailer",
-//   text : "Welcome Shubham",
-//   html : "<b>Welcome</b>"
-// }
-
-// sendMail(mail)
-
 app.use((req, res, next) => {
   const error = new Error('NOT FOUND')
   error.status = 404
