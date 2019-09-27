@@ -18,6 +18,6 @@ const enquirySchema = new mongoose.Schema({
         required:true
     }
 })
-const Enquiry = mongoose.model('contactUs',enquirySchema)
+const Enquiry = mongoose.model('enquiry',enquirySchema)
 
 module.exports = Enquiry

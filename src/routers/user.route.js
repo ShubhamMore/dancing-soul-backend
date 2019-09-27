@@ -80,12 +80,14 @@ router.post('/forgotPassword', async (req, res) => {
         
         const link = process.env.MAIL_URI+"/#/reset_password?token="+token;
 
-        sgMail.send({
-            to: user.email,
-            from: 'shubhammore1796@gmail.com',
-            subject: 'Reset Password Link',
-            text: link
-        });
+        const mail = {
+            from : "shubhammore.developer@gmail.com",
+            to : user.email,
+            subject : "Reset Password Link",
+            text : link
+        }
+            
+        await sendMail(mail);
         
         res.status(200).send({data: "success"});
 

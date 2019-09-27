@@ -1,6 +1,8 @@
 const express = require('express')
 const auth = require('../middleware/auth')
 const Enquiry = require('../model/enquiry.model')
+const sendMail = require("../mail/mail")
+
 const router = new express.Router()
 
 router.post('/sendEnquiry', async (req, res) => {
@@ -9,6 +11,17 @@ router.post('/sendEnquiry', async (req, res) => {
     try {
         await enquiry.save()
         // send wnquiry to mail
+
+        // const mail = {
+        //     from : "shubhammore.developer@gmail.com",
+        //     to : "shubhammore1796@gmail.com",
+        //     subject : "Welcome to Nodemailer",
+        //     text : "Welcome Shubham",
+        //     html : "<b>Welcome</b>"
+        // }
+
+        // sendMail(mail)
+
         const data = {
             success : true
         }
@@ -25,6 +38,17 @@ router.post('/replyEnquiry', auth, async (req, res) => {
     try {
         console.log("reply", req.body);
         // send enquiry to mail
+
+        // const mail = {
+        //     from : "shubhammore.developer@gmail.com",
+        //     to : "shubhammore1796@gmail.com",
+        //     subject : "Welcome to Nodemailer",
+        //     text : "Welcome Shubham",
+        //     html : "<b>Welcome</b>"
+        // }
+
+        // sendMail(mail)
+
         const data = {
             success : true
         }
