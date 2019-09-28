@@ -9,7 +9,8 @@ var gallertSchema = mongoose.Schema({
         required: true
     },
     imageId: {
-        type: String
+        type: String,
+        require: true
     },
     post_date: {
         type: Date,

@@ -1,9 +1,9 @@
 const path = require("path");
 const express = require('express')
 const bodyParser = require("body-parser");
+
 require('./database/mongoose')
 
-const sendMail = require("./mail/mail")
 const aboutRouter = require('./routers/about.route')
 const articleRouter = require('./routers/article.route')
 const attendanceRouter = require('./routers/attendance.route')
@@ -22,12 +22,10 @@ const port = process.env.PORT
 
 app.use(express.json())
 
-app.use(express.static(path.join(__dirname, 'public')))
-app.use('/uploads', express.static('uploads'))
+app.use("/images", express.static(path.join("images")));
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json());
 
-app.use(bodyParser.json());
 
 app.use(function (req, res, next) {
     // Website you wish to allow to connect
