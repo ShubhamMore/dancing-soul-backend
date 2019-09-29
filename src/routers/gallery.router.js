@@ -11,49 +11,54 @@ const cloudinaryRemoveImage = require("../image-upload/cloudinaryRemoveImage")
 
 const router = new express.Router()
 
-router.post('/addImages', multer({ storage: storage }).array("image"), async (req, res) => {
+router.post('/addImages',  multer({ storage: storage }).array("image"), async (req, res) => {
 
     const file = req.files;
-    let imagePaths = new Array();
-    let imageNames = new Array();
-    for(let i=0; i< file.length; i++) {
-        imagePaths.push(file[i].path);
-        imageNames.push(file[i].filename.split(".")[0]);
-    }
-
-    const cloudeDirectory = "gallery";
-
-    try {
-        const upload_responce = await cloudinaryUploadImages(imagePaths, imageNames, cloudeDirectory);
-
-        const upload_res = upload_responce.upload_res;
-        const upload_res_len = upload_res.length;
-
-        const responce = new Array();
-        
-        if(upload_res_len > 0) {
-            for(let i=0; i<upload_res_len; i++) {
-                const img_data = {
-                    image_name : upload_res[i].original_filename + "." + upload_res[i].format,
-                    secure_url : upload_res[i].secure_url,
-                    public_id : upload_res[i].public_id,
-                    created_at : upload_res[i].created_at
-                }
-                const gallery = new Gallery(img_data);
-                const res = await gallery.save();
-                responce.push(res);
-            }
+    if(file !== undefined) {
+        let imagePaths = new Array();
+        let imageNames = new Array();
+        for(let i=0; i< file.length; i++) {
+            imagePaths.push(file[i].path);
+            imageNames.push(file[i].filename.split(".")[0]);
         }
     
-        res.status(200).send({responce, upload_responce})
+        const cloudeDirectory = "gallery";
+    
+        try {
+            const upload_responce = await cloudinaryUploadImages(imagePaths, imageNames, cloudeDirectory);
+    
+            const upload_res = upload_responce.upload_res;
+            const upload_res_len = upload_res.length;
+    
+            const responce = new Array();
+            
+            if(upload_res_len > 0) {
+                for(let i=0; i<upload_res_len; i++) {
+                    const img_data = {
+                        image_name : upload_res[i].original_filename + "." + upload_res[i].format,
+                        secure_url : upload_res[i].secure_url,
+                        public_id : upload_res[i].public_id,
+                        created_at : upload_res[i].created_at
+                    }
+                    const gallery = new Gallery(img_data);
+                    const res = await gallery.save();
+                    responce.push(res);
+                }
+            }
+        
+            res.status(200).send({responce, upload_responce})
+        }
+        catch(e) {
+            res.status(400).send(e);
+        }
     }
-    catch(e) {
-        res.status(400).send(e);
+    else {
+        res.status(400).send({error : "File Not Found"})
     }
 
 })
 
-router.post('/addImage', multer({ storage: storage }).single("image"), async (req, res) => {
+router.post('/addImage', auth, multer({ storage: storage }).single("image"), async (req, res) => {
 
     const file = req.file;
     let imagePath = file.path;
@@ -75,7 +80,7 @@ router.post('/addImage', multer({ storage: storage }).single("image"), async (re
 
         const gallery = new Gallery(img_data);
 
-        const res = await gallery.save();
+        const responce = await gallery.save();
 
         res.status(200).send({responce, upload_responce})
     }
@@ -95,7 +100,7 @@ router.post("/getImages", async (req, res) => {
     }
 })
 
-router.post("/removeImage", async (req, res) => {
+router.post("/removeImage", auth, async (req, res) => {
 
     const public_id = req.body.public_id;
     try {  

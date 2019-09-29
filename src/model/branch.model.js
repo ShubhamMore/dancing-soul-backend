@@ -28,9 +28,26 @@ const branchSchema = new mongoose.Schema({
     description:{
         type:String
     },
-    images:{
-        type:String
-    },
+    images:[
+        {
+            image_name: {
+                type: String,
+                required: true
+            },
+            secure_url: {
+                type: String,
+                required: true
+            },
+            public_id: {
+                type: String,
+                require: true
+            },
+            created_at: {
+                type: String,
+                default: Date.now.toString()
+            }
+        }
+    ],
     batch:[
         {
             batchType:{
