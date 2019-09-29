@@ -21,7 +21,7 @@ router.post('/addImages', multer({ storage: storage }).array("image"), async (re
         imageNames.push(file[i].filename.split(".")[0]);
     }
 
-    const cloudeDirectory = "blog";
+    const cloudeDirectory = "gallery";
 
     try {
         const upload_responce = await cloudinaryUploadImages(imagePaths, imageNames, cloudeDirectory);
@@ -59,17 +59,55 @@ router.post('/addImage', multer({ storage: storage }).single("image"), async (re
     let imagePath = file.path;
     let imageName = file.filename.split(".")[0];
 
-    const cloudeDirectory = "blog";
+    const cloudeDirectory = "gallery";
 
-    const path = await cloudinaryUploadImage(imagePath, imageName, cloudeDirectory);
+    try {
+        const upload_responce = await cloudinaryUploadImage(imagePath, imageName, cloudeDirectory);
+    
+        const upload_res = upload_responce.upload_res;
 
-    res.status(200).send({responce: true, paths})
+        const img_data = {
+            image_name : upload_res.original_filename + "." + upload_res.format,
+            secure_url : upload_res.secure_url,
+            public_id : upload_res.public_id,
+            created_at : upload_res.created_at
+        }
+
+        const gallery = new Gallery(img_data);
+
+        const res = await gallery.save();
+
+        res.status(200).send({responce, upload_responce})
+    }
+    catch(e) {
+        res.status(400).send(e);
+    }
+})
+
+router.post("/getImages", async (req, res) => {
+    
+    try {
+        const images = await Gallery.find();
+        res.status(200).send(images)
+    }
+    catch(e) {
+        res.status(400).send(e)
+    }
 })
 
 router.post("/removeImage", async (req, res) => {
-    const id = req.body.public_id;
-    await cloudinaryRemoveImage(id);
-    res.send()
+
+    const public_id = req.body.public_id;
+    try {  
+        await Gallery.findOneAndRemove({public_id});
+        
+        const responce = await cloudinaryRemoveImage(public_id);
+
+        res.status(200).send(responce)
+    }
+    catch(e) {
+        res.status(400).send(e)
+    }
 })
 
 module.exports = router
