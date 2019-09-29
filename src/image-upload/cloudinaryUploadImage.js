@@ -12,7 +12,6 @@ const uploadImageToCloude = async (filePath, fileName, cloudeDirectory) => {
         let upload_err;
         let file_err;
         
-        console.log(path.join(__dirname, filePath))
         await cloudinary.v2.uploader.upload(
             filePath,
             { 
@@ -21,7 +20,8 @@ const uploadImageToCloude = async (filePath, fileName, cloudeDirectory) => {
             },
             (error, responce)  => {
                 if (error) {
-                    fs.unlink(path.join(__dirname, filePath), (err) => {
+
+                    fs.unlink(path.join(__dirname, "../../", filePath), (err) => {
                         if (err) {
                             file_err = err;
                         }
@@ -29,7 +29,7 @@ const uploadImageToCloude = async (filePath, fileName, cloudeDirectory) => {
                     upload_err = error;
                 }
                 
-                fs.unlink(path.join(__dirname, filePath), (err) => {
+                fs.unlink(path.join(__dirname, "../../", filePath), (err) => {
                     if (err) {
                         file_err = err;
                     }
@@ -37,7 +37,6 @@ const uploadImageToCloude = async (filePath, fileName, cloudeDirectory) => {
                 upload_res = responce;
             }
         )
-        console.log(upload_res, upload_err, file_err);
         return {upload_res, upload_err, file_err};
     }
     catch(e) {

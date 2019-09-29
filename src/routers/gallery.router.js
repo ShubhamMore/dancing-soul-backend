@@ -23,9 +23,34 @@ router.post('/addImages', multer({ storage: storage }).array("image"), async (re
 
     const cloudeDirectory = "blog";
 
-    const paths = await cloudinaryUploadImages(imagePaths, imageNames, cloudeDirectory);
+    try {
+        const upload_responce = await cloudinaryUploadImages(imagePaths, imageNames, cloudeDirectory);
 
-    res.status(200).send({responce: true, paths})
+        const upload_res = upload_responce.upload_res;
+        const upload_res_len = upload_res.length;
+
+        const responce = new Array();
+        
+        if(upload_res_len > 0) {
+            for(let i=0; i<upload_res_len; i++) {
+                const img_data = {
+                    image_name : upload_res[i].original_filename + "." + upload_res[i].format,
+                    secure_url : upload_res[i].secure_url,
+                    public_id : upload_res[i].public_id,
+                    created_at : upload_res[i].created_at
+                }
+                const gallery = new Gallery(img_data);
+                const res = await gallery.save();
+                responce.push(res);
+            }
+        }
+    
+        res.status(200).send({responce, upload_responce})
+    }
+    catch(e) {
+        res.status(400).send(e);
+    }
+
 })
 
 router.post('/addImage', multer({ storage: storage }).single("image"), async (req, res) => {

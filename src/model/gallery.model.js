@@ -1,20 +1,20 @@
 var mongoose = require('mongoose');
 var gallertSchema = mongoose.Schema({
-    imageName: {
+    image_name: {
         type: String,
         required: true
     },
-    cloudImage: {
+    secure_url: {
         type: String,
         required: true
     },
-    imageId: {
+    public_id: {
         type: String,
         require: true
     },
-    post_date: {
-        type: Date,
-        default: Date.now
+    created_at: {
+        type: String,
+        default: Date.now.toString()
     }
 })
 module.exports = mongoose.model('gallery', gallertSchema)
