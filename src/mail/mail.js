@@ -11,8 +11,8 @@ const sendMail = async (mail) => {
         secure: true, // true for 465, false for other ports
         requireTLS: true,
         auth: {
-            user: "shubhammore.developer@gmail.com", // generated ethereal user
-            pass: "Shubham@17" // generated ethereal password
+            user: process.env.GMAIL_USER, // generated ethereal user
+            pass: process.env.GMAIL_PASSWORD // generated ethereal password
         }
     });
 

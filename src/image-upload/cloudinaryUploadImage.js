@@ -8,7 +8,9 @@ const uploadImageToCloude = async (filePath, fileName, cloudeDirectory) => {
 
     try {
 
-        let res;
+        let upload_res;
+        let upload_err;
+        let file_err;
         
         console.log(path.join(__dirname, filePath))
         await cloudinary.v2.uploader.upload(
@@ -18,28 +20,28 @@ const uploadImageToCloude = async (filePath, fileName, cloudeDirectory) => {
                 public_id: fileName
             },
             (error, responce)  => {
-                console.log(error, responce);
                 if (error) {
-                    console.log("error msg", error);
                     fs.unlink(path.join(__dirname, filePath), (err) => {
-                        if (err) throw err;
+                        if (err) {
+                            file_err = err;
+                        }
                     });
-                    res.status(400).send(error);
-                    return;
+                    upload_err = error;
                 }
                 
-                console.log('file uploaded to Cloudinary');
                 fs.unlink(path.join(__dirname, filePath), (err) => {
-                    if (err) throw err;
+                    if (err) {
+                        file_err = err;
+                    }
                 });
-                res = responce;
+                upload_res = responce;
             }
         )
-        console.log(res)
-        return res;
+        console.log(upload_res, upload_err, file_err);
+        return {upload_res, upload_err, file_err};
     }
     catch(e) {
-        console.log(e);
+        throw new Error("Something bad happen, While uploading the file" + e)
     }
 }
 

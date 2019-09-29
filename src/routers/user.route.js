@@ -4,10 +4,9 @@ const Student = require('../model/student.model')
 const Faculty = require('../model/faculty.model')
 const jwt = require('jsonwebtoken')
 const auth = require('../middleware/auth')
-const router = new express.Router()
+const sendMail = require("../mail/mail")
 
-const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey(process.env.SGAPI_KEY);
+const router = new express.Router()
 
 router.post('/newUser', async (req, res) => {
     const user = new User(req.body)
