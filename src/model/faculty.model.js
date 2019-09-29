@@ -15,7 +15,22 @@ const facultySchema = new mongoose.Schema({
         required:true,
     },
     image:{
-        type:String
+        image_name: {
+            type: String,
+            required: true
+        },
+        secure_url: {
+            type: String,
+            required: true
+        },
+        public_id: {
+            type: String,
+            require: true
+        },
+        created_at: {
+            type: String,
+            default: Date.now.toString()
+        }
     },
     email:{
         type:String,

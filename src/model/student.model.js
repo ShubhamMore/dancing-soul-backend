@@ -15,8 +15,23 @@ const studentSchema = new mongoose.Schema({
         type:String
     }, 
     image:{
-        type:String,
-    }, 
+        image_name: {
+            type: String,
+            required: true
+        },
+        secure_url: {
+            type: String,
+            required: true
+        },
+        public_id: {
+            type: String,
+            require: true
+        },
+        created_at: {
+            type: String,
+            default: Date.now.toString()
+        }
+    },
     firstGuardianName:{
         type:String,
         required:true

@@ -1,17 +1,81 @@
+const multer = require("multer")
 const express = require('express')
+
 const auth = require('../middleware/auth')
+
+const storage = require("../image-upload/multerConfig")
+
+const cloudinaryRemoveImage = require("../image-upload/cloudinaryRemoveImage")
+const cloudinaryUploadImage = require("../image-upload/cloudinaryUploadImage")
+
 const Faculty = require('../model/faculty.model')
-const User = require('../model/user.model')
+const User = require("../model/user.model")
+
+const user_image = require("../shared/user.image")
+
 const sendMail = require("../mail/mail")
 
 const router = new express.Router()
 
-router.post("/addFaculty", auth, async (req, res) =>{
-    const faculty = new Faculty(req.body.faculty)
-    const user = new User(req.body.user)
+router.post("/addFaculty", auth, multer({ storage: storage }).single("image"), async (req, res) =>{
+
+    const file = req.file;
     try {
+
+        const data = req.body;
+        
+        const user = new User({
+            email : data.email,
+            password : data.phone,
+            userType : "faculty"
+        })
         
         await user.save()
+        
+        let image;
+
+        if(file !== undefined) {
+            let imagePath = file.path;
+            let imageName = file.filename.split(".")[0];
+        
+            const cloudeDirectory = "faculties";
+        
+            try {
+                const upload_responce = await cloudinaryUploadImage(imagePath, imageName, cloudeDirectory);
+        
+                const upload_res = upload_responce.upload_res;
+                
+                if(upload_res) {
+                    const img_data = {
+                        image_name : upload_res.original_filename + "." + upload_res.format,
+                        secure_url : upload_res.secure_url,
+                        public_id : upload_res.public_id,
+                        created_at : upload_res.created_at
+                    }
+                    image = img_data;
+                    
+                }
+            }
+            catch(e) {
+                image = user_image
+            }
+        }
+        else {
+            image = user_image
+        }
+
+        const facultyData = {
+            name: data.name,
+            birthDate: data.birthDate,
+            description: data.description,
+            image: image,
+            email: data.email,
+            phone: data.phone,
+            status: data.status
+        };
+        
+        const faculty = new Faculty(facultyData)
+
         await faculty.save()
         
         const mail = {
@@ -21,6 +85,7 @@ router.post("/addFaculty", auth, async (req, res) =>{
             text : "Welcome Shubham",
             html : "<b>Welcome</b>" + faculty.name +"<br>Userid : " + faculty.email +"<br>Password : " + faculty.phone
         }
+
         await sendMail(mail);
 
         res.status(200).send(user)  
@@ -29,7 +94,7 @@ router.post("/addFaculty", auth, async (req, res) =>{
         if(e.code == 11000) {
             err = "User alredy register";
         }
-        res.status(400).send(err)
+        res.status(400).send(err + e)
     }
 });
 
@@ -121,14 +186,67 @@ router.post("/changeFacultyStatus", auth, async(req, res)=>{
     }
 });
 
-router.post("/editFaculty", auth, async(req,res)=>{
-    try {
+router.post("/editFaculty", auth, multer({ storage: storage }).single("image"), async(req,res)=>{
 
-        const faculty = await Faculty.findByIdAndUpdate(req.body._id, req.body)
+    const file = req.file;
+    try {
+        let image;
+
+        const faculty = await Faculty.findById(req.body._id);
+        
         if(!faculty) {
-            throw new Error("No Faculty found");
+            throw new Error("No Faculty Found");
         }
-        res.status(200).send(faculty)
+
+        image = faculty.image;
+
+        const img_pub_id = faculty.image.public_id;
+
+        if(file !== undefined) {
+            let imagePath = file.path;
+            let imageName = file.filename.split(".")[0];
+        
+            const cloudeDirectory = "faculties";
+        
+            try {
+                const upload_responce = await cloudinaryUploadImage(imagePath, imageName, cloudeDirectory);
+        
+                const upload_res = upload_responce.upload_res;
+                
+                if(upload_res) {
+                    const img_data = {
+                        image_name : upload_res.original_filename + "." + upload_res.format,
+                        secure_url : upload_res.secure_url,
+                        public_id : upload_res.public_id,
+                        created_at : upload_res.created_at
+                    }
+                    image = img_data;
+                }
+
+                if(img_pub_id !== user_image.public_id) {
+                    await cloudinaryRemoveImage(img_pub_id);
+                }
+            }
+            catch(e) {
+            }
+        }
+
+        const data = req.body;
+
+        const facultyData = {
+            _id : data._id,
+            name: data.name,
+            birthDate: data.birthDate,
+            description: data.description,
+            image: image,
+            email: data.email,
+            phone: data.phone,
+            status: data.status
+        };
+
+        await Faculty.findByIdAndUpdate(data._id, facultyData);
+
+        res.status(200).send({success: true})
     } catch (error) {
         console.log(error)
         res.status(401).send(error)    
@@ -138,10 +256,25 @@ router.post("/editFaculty", auth, async(req,res)=>{
 router.post("/deleteFaculty", auth, async (req,res)=>{
     
     try {
-        const faculty = await Faculty.findByIdAndDelete(req.body._id) 
+
+        const user = await User.findByCredentials(req.user.email, req.body.password)
+        if(!user) {
+            throw new Error("Wrong Password, Please enter correct password");
+        }
+
+        const faculty = await Faculty.findById(req.body._id) 
         if(!faculty) {
             throw new Error("No faculty found");
-        }  
+        } 
+
+        if(faculty.image.public_id !== user_image.public_id) {
+            await cloudinaryRemoveImage(faculty.image.public_id);
+        }
+
+        await Faculty.findByIdAndDelete(req.body._id)
+
+        await User.findByIdAndDelete(user._id);
+        
         res.status(200).send({success : true})
     } catch (error) {
         res.status(401).send(error)    

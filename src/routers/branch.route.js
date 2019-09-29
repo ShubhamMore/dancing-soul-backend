@@ -1,14 +1,20 @@
 const multer = require("multer")
 const express = require('express')
+
 const auth = require('../middleware/auth')
-const Branch = require('../model/branch.model')
-const no_image = require("../shared/no_image.image")
+
 const storage = require("../image-upload/multerConfig")
-const cloudinaryUploadImages = require("../image-upload/cloudinaryUploadImages")
+
 const cloudinaryRemoveImage = require("../image-upload/cloudinaryRemoveImage")
-const findIndexByKey = require("../shared/findIndex")
+const cloudinaryUploadImages = require("../image-upload/cloudinaryUploadImages")
+
+const Branch = require('../model/branch.model')
 const User = require("../model/user.model")
-const image_public_ids = require("../shared/path.object")
+
+const no_image = require("../shared/no_image.image")
+
+const findIndexByKey = require("../shared/findIndex")
+
 const router = new express.Router()
 
 router.post('/addBranch', auth, multer({ storage: storage }).array("image"), async (req, res) => {
@@ -164,7 +170,7 @@ router.post('/editBranch', auth, multer({ storage: storage }).array("image"), as
                     }
                 }
 
-                const index = findIndexByKey(images, "public_id", image_public_ids.no_image);
+                const index = findIndexByKey(images, "public_id", no_image.public_id);
                 console.log(index)
                 if(index !== null) {
                     images.splice(index, 1);
@@ -273,7 +279,7 @@ router.post('/deleteBranch', auth, async (req, res)=>{
         
         const images = branch.images;
 
-        const index = findIndexByKey(images, "public_id", image_public_ids.no_image);
+        const index = findIndexByKey(images, "public_id", no_image.public_id);
         if(index !== null) {
             for(let i=0; i<images.length; i++) {
                 await cloudinaryRemoveImage(images[i].public_id);        
