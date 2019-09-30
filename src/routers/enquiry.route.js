@@ -10,13 +10,13 @@ router.post('/sendEnquiry', async (req, res) => {
     const enquiry = new Enquiry(req.body)
     try {
         await enquiry.save()
-        // send wnquiry to mail
+        // send enquiry to mail
 
         // const mail = {
-        //     from : "shubhammore.developer@gmail.com",
+        //     from : enquiry.from,
         //     to : "shubhammore1796@gmail.com",
         //     subject : "Welcome to Nodemailer",
-        //     text : "Welcome Shubham",
+        //     text : "",
         //     html : "<b>Welcome</b>"
         // }
 
@@ -36,7 +36,6 @@ router.post('/replyEnquiry', auth, async (req, res) => {
 
     // const reply = new Enquiry(req.body)
     try {
-        console.log("reply", req.body);
         // send enquiry to mail
 
         // const mail = {

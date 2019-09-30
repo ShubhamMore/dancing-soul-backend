@@ -10,7 +10,6 @@ const router = new express.Router()
 
 router.post('/newUser', async (req, res) => {
     const user = new User(req.body)
-    console.log(user)
     try {
         await user.save()
         const data = {
@@ -19,7 +18,6 @@ router.post('/newUser', async (req, res) => {
         }
         res.status(201).send(data)
     } catch (e) {
-        console.log(e)
         let err = "Something bad happend";
         if(e.code == 11000) {
             err = "User alredy register, Please login";
@@ -119,7 +117,6 @@ router.post('/validateToken', async (req, res) => {
 
 router.post('/resetPassword', async (req, res) => {
     try {
-        console.log(req.body)
 
         const decoded = jwt.verify(req.body.token, process.env.JWT_SECRET)
 
@@ -141,7 +138,6 @@ router.post('/resetPassword', async (req, res) => {
 })
 
 router.post('/changePassword', auth, async (req, res) => {
-    console.log(req.body)
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password);
 

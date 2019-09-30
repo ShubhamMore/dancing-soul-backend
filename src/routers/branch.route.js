@@ -172,10 +172,9 @@ router.post('/editBranch', auth, multer({ storage: storage }).array("image"), as
                 }
 
                 const index = findIndexByKey(images, "public_id", no_image.public_id);
-                console.log(index)
+                
                 if(index !== null) {
                     images.splice(index, 1);
-                    console.log("spliced")
                 }
             }
             catch(e) {
@@ -224,8 +223,6 @@ router.post('/changeBranchStatus', auth, async (req, res)=>{
 });
 
 router.post('/deleteBranchImage', auth, async (req, res)=>{
-
-    console.log(req.user);
     
     const public_id = req.body.public_id;
     try {  
@@ -236,8 +233,6 @@ router.post('/deleteBranchImage', auth, async (req, res)=>{
         const images = branch.images;
         
         const responce = await cloudinaryRemoveImage(public_id);
-
-        // console.log(responce)
 
         if(responce.result == "ok") {
             const index = findIndexByKey(images, "public_id", public_id);

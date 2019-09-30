@@ -56,7 +56,6 @@ router.post("/editReceipt", auth, async(req,res)=>{
 });
 
 router.post("/deleteReceipt", auth, async (req,res)=>{
-    console.log(req.body)
     try {
         const receipt = await Receipt.findByIdAndDelete(req.body._id)
         if(!receipt) {
