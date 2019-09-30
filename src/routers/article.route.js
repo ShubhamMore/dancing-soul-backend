@@ -8,8 +8,9 @@ router.post("/addArticle", auth, async(req, res)=>{
     try {
         await article.save()
         res.status(200).send({success : true})
-    } catch (error) {
-        res.status(401).send(error)    
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -20,10 +21,10 @@ router.post("/getArticles", async(req,res)=>{
             throw new Error("No Article found");
         }
         res.status(200).send(articles)
-    } catch (error) {
-        console.log(error)
-        res.status(401).send(error)
-    }
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }   
 });
 
 router.post("/getArticle", async(req,res)=>{
@@ -34,10 +35,10 @@ router.post("/getArticle", async(req,res)=>{
         }
         res.status(200).send(article)
         
-    } catch (error) {
-        console.log(error)
-        res.status(401).send(error)
-    }
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }   
 })
 
 router.post("/editArticle", auth, async(req,res)=>{
@@ -47,10 +48,10 @@ router.post("/editArticle", auth, async(req,res)=>{
             throw new Error("No Article found");
         }
         res.status(200).send(article)
-    } catch (error) {
-        console.log(error)
-        res.status(401).send(error)    
-    }
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }   
 });
 
 router.post("/deleteArticle", auth, async(req,res)=>{
@@ -61,10 +62,10 @@ router.post("/deleteArticle", auth, async(req,res)=>{
             throw new Error("No Articles found");
         }  
         res.status(200).send(article)
-    } catch (error) {
-        console.log(error)
-        res.status(401).send(error)    
-    } 
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }   
 });
 
 module.exports = router

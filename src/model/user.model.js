@@ -4,41 +4,41 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const userSchema = new mongoose.Schema({
-    email: {
-        type: String,
-        unique: true,
-        required: true,
-        trim: true,
-        lowercase: true,
+    email : {
+        type : String,
+        unique : true,
+        required : true,
+        trim : true,
+        lowercase : true,
         validate(value) {
             if (!validator.isEmail(value)) {
                 throw new Error('Email is invalid')
             }
         }
     },
-    password: {
-        type: String,
-        required: true,
-        minlength: 7,
-        trim: true,
+    password : {
+        type : String,
+        required : true,
+        minlength : 7,
+        trim : true,
         validate(value) {
             if (value.toLowerCase().includes('password')) {
                 throw new Error('Password cannot contain "password"')
             }
         }
     },
-    userType: {
-        type: String,
-        required: true
+    userType : {
+        type : String,
+        required : true
     },
-    tokens: [{
-        token: {
-            type: String,
-            required: true
+    tokens : [{
+        token : {
+            type : String,
+            required : true
         }
     }]
 }, {
-    timestamps: true
+    timestamps : true
 })
 
 userSchema.methods.toJSON = function () {
@@ -54,7 +54,7 @@ userSchema.methods.toJSON = function () {
 
 userSchema.methods.generateAuthToken = async function () {
     const user = this
-    const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET)
+    const token = jwt.sign({ _id : user._id.toString() }, process.env.JWT_SECRET)
 
     user.tokens = user.tokens.concat({ token })
     await user.save()

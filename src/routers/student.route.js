@@ -101,11 +101,12 @@ router.post("/addStudent", auth, multer({ storage: storage }).single("image"), a
 
         res.status(200).send(user)  
     } catch (e) {
-        let err = "Something bad happend";
+        let err = "Something bad happend, ";
         if(e.code == 11000) {
-            err = "User alredy register";
+            err = "User alredy register, ";
         }
-        res.status(400).send(err + e)
+        err = err + e;
+        res.status(400).send(err.replace('Error: ', ''));        
     }
 });
 
@@ -116,9 +117,9 @@ router.post('/getStudents', auth, async (req, res) => {
             throw new Error("No Student Found");
         }
         res.status(200).send(students);
-    }
-    catch(e) {
-        res.status(400).send(""+e);
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 })
 
@@ -129,13 +130,13 @@ router.post('/getStudent', auth, async (req, res) => {
             throw new Error("No Student Found");
         }
         res.status(200).send(student);
-    }
-    catch(e) {
-        let error = ""+e;
+    } catch (e) {
+        let err = "Something bad happen, ";
         if(e.name === "CastError") {
-            error = "No Student Found";
+            err = "No Student Found, ";
         }
-        res.status(400).send(error);
+        err = err + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 })
 
@@ -211,9 +212,9 @@ router.post("/editStudent", auth, multer({ storage: storage }).single("image"), 
         await Student.findByIdAndUpdate(data._id, studentData);
 
         res.status(200).send({success: true})
-    } catch (error) {
-        console.log(error)
-        res.status(401).send(error)    
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -257,9 +258,9 @@ router.post('/changeStudentStatus', auth, async (req, res) => {
             await sendMail(mail);
         }
         res.status(200).send({succes : true});
-    }
-    catch(e) {
-        res.status(400).send(""+e);
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -288,9 +289,10 @@ router.post("/deleteStudent", auth, async (req,res)=>{
         await User.findByIdAndDelete(user._id);
         
         res.status(200).send({success : true})
-    } catch (error) {
-        res.status(401).send(error)    
-    } 
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }
 });
 
 module.exports = router

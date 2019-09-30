@@ -15,7 +15,8 @@ const removeCloudeImage = async (public_id) => {
         return res;
     }
     catch(e) {
-        throw new Error("Something bad happen while removing file" + e);
+        const err = "Something bad happen while removing image file, " + e;
+        throw new Error(err.replace('Error: ', ''));
     }
 }
 

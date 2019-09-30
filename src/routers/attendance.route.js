@@ -8,10 +8,10 @@ router.post("/saveAttendance", auth, async (req, res)=>{
     try {
         await attendance.save()
         res.status(200).send({success : true})
-    } catch (error) {
-        console.log(error)
-        res.status(400).send(error)   
-    }
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }   
 });
 
 router.post("/getAttendance", auth, async (req, res)=>{
@@ -23,9 +23,9 @@ router.post("/getAttendance", auth, async (req, res)=>{
 
         res.status(201).send(attendance)
     } catch (e) {
-        let err = "Something bad happend";
-        res.status(400).send(err)
-    }
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }   
 });
 
 module.exports = router

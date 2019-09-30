@@ -8,10 +8,13 @@ const storage = require("../image-upload/multerConfig")
 const cloudinaryRemoveImage = require("../image-upload/cloudinaryRemoveImage")
 const cloudinaryUploadImages = require("../image-upload/cloudinaryUploadImages")
 
+const Student = require("../model/student.model")
+const Receipt = require('../model/receipt.model')
 const Branch = require('../model/branch.model')
 const User = require("../model/user.model")
 
 const no_image = require("../shared/no_image.image")
+const user_image = require("../shared/user.image")
 
 const findIndexByKey = require("../shared/findIndex")
 
@@ -73,15 +76,13 @@ router.post('/addBranch', auth, multer({ storage: storage }).array("image"), asy
         };
         const branch = new Branch(branchData)
 
-        console.log(branch);
-
         await branch.save()
         
-        res.status(201).send({success : true})
+        res.status(200).send({success : true})
     } catch (e) {
-        let err = "Something bad happend";
-        res.status(400).send(err)
-    }
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }   
 });
 
 router.post('/getBranches', auth, async (req, res)=>{
@@ -91,11 +92,11 @@ router.post('/getBranches', auth, async (req, res)=>{
             throw new Error("No Branch Found");
         }
 
-        res.status(201).send(branches)
+        res.status(200).send(branches)
     } catch (e) {
-        let err = "Something bad happend";
-        res.status(400).send(err)
-    }
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }   
 });
 
 router.post('/getActivateBranches', async (req, res)=>{
@@ -105,11 +106,11 @@ router.post('/getActivateBranches', async (req, res)=>{
             throw new Error("No Branch Found");
         }
 
-        res.status(201).send(branch)
+        res.status(200).send(branch)
     } catch (e) {
-        let err = "Something bad happend";
-        res.status(400).send(err)
-    } 
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }
 });
 
 router.post('/getBranch', auth, async (req, res)=>{
@@ -120,11 +121,11 @@ router.post('/getBranch', auth, async (req, res)=>{
             throw new Error("No Branch Found");
         }
 
-        res.status(201).send(branch)
+        res.status(200).send(branch)
     } catch (e) {
-        let err = "Something bad happend";
-        res.status(400).send(err)
-    } 
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }
 });
 
 router.post('/editBranch', auth, multer({ storage: storage }).array("image"), async (req, res)=>{
@@ -197,12 +198,11 @@ router.post('/editBranch', auth, multer({ storage: storage }).array("image"), as
 
         await Branch.findByIdAndUpdate(data._id, branchData);
         
-        res.status(201).send({success : true})
+        res.status(200).send({success : true})
 
     } catch (e) {
-        console.log(e)
-        let err = "Something bad happend";
-        res.status(400).send(err)
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -216,11 +216,11 @@ router.post('/changeBranchStatus', auth, async (req, res)=>{
         const data = {
             success : true
         }
-        res.status(201).send(data)
+        res.status(200).send(data)
     } catch (e) {
-        let err = "Something bad happend";
-        res.status(400).send(err)
-    } 
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }
 });
 
 router.post('/deleteBranchImage', auth, async (req, res)=>{
@@ -255,13 +255,10 @@ router.post('/deleteBranchImage', auth, async (req, res)=>{
         await Branch.findByIdAndUpdate(req.body._id, branch);
 
         res.status(200).send(responce)
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
-    catch(e) {
-        console.log(e)
-        let err = "Something bad happend";
-        res.status(400).send(err)
-    }
-
 });
 
 router.post('/deleteBranch', auth, async (req, res)=>{
@@ -276,6 +273,22 @@ router.post('/deleteBranch', auth, async (req, res)=>{
         if(!branch) {
             throw new Error("No Branch Found");
         }
+
+        const students = await Student.find({branch : branch._id})
+
+        const stu_len = students.length;
+
+        for(let i=0; i<stu_len; i++) {
+            if(students[i].image.public_id !== user_image.public_id) {
+                await addresscloudinaryRemoveImage(students[i].image.public_id);
+            }
+    
+            await Receipt.deleteMany({student : students[i]._id});
+    
+            await Student.findByIdAndDelete(students[i]._id);
+    
+            await User.findOneAndDelete({email : students[i].email});
+        }
         
         const images = branch.images;
 
@@ -288,14 +301,12 @@ router.post('/deleteBranch', auth, async (req, res)=>{
         
         await Branch.findByIdAndDelete(req.body._id);
 
-        const data = {
-            success : true
-        }
-        res.status(201).send(data)
+        res.status(200).send({ success : true });
+
     } catch (e) {
-        let err = "Something bad happend"+e;
-        res.status(400).send(err)
-    } 
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }
 });
 
 module.exports = router

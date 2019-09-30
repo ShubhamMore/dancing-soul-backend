@@ -25,10 +25,10 @@ router.post('/sendEnquiry', async (req, res) => {
         const data = {
             success : true
         }
-        res.status(201).send(data)
+        res.status(200).send(data)
     } catch (e) {
-        let err = "Something bad happend";
-        res.status(400).send(err)
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -52,10 +52,10 @@ router.post('/replyEnquiry', auth, async (req, res) => {
         const data = {
             success : true
         }
-        res.status(201).send(data)
+        res.status(200).send(data)
     } catch (e) {
-        let err = "Something bad happend";
-        res.status(400).send(err)
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -67,10 +67,10 @@ router.post('/getEnquiries', auth, async (req, res)=>{
             throw new Error("No Enquiry Found");
         }
 
-        res.status(201).send(enquiries)
+        res.status(200).send(enquiries)
     } catch (e) {
-        let err = "Something bad happend " + e;
-        res.status(400).send(err)
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -81,11 +81,11 @@ router.post('/getEnquiry', auth, async (req, res)=>{
             throw new Error("No Enquiry Found");
         }
 
-        res.status(201).send(enquiry)
+        res.status(200).send(enquiry)
     } catch (e) {
-        let err = "Something bad happend";
-        res.status(400).send(err)
-    } 
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }
 });
 
 module.exports = router

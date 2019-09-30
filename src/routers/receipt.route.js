@@ -9,9 +9,9 @@ router.post("/addReceipt", auth, async (req,res) =>{
     try {
         await receipt.save()      
         res.status(200).send({success : true})  
-    } catch (error) {
-        let err = "Something bad happend";
-        res.status(400).send(err)
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -22,9 +22,9 @@ router.post("/getReceipts", auth, async(req, res)=>{
             throw new Error("No Receipt found");
         }
         res.status(200).send(receipts)
-    } catch (error) {
-        console.log(error)
-        res.status(401).send(error)
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -36,9 +36,9 @@ router.post("/getReceipt", auth, async(req,res)=>{
         }
         res.status(200).send(receipt)
         
-    } catch (error) {
-        console.log(error)
-        res.status(401).send(error)
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -49,9 +49,9 @@ router.post("/editReceipt", auth, async(req,res)=>{
             throw new Error("No Receipt found");
         }
         res.status(200).send(receipt)
-    } catch (error) {
-        console.log(error)
-        res.status(401).send(error)    
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -63,9 +63,10 @@ router.post("/deleteReceipt", auth, async (req,res)=>{
             throw new Error("No Receipt found");
         }  
         res.status(200).send({success : true})
-    } catch (error) {
-        res.status(401).send(error)    
-    } 
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }
 });
 
 module.exports = router;

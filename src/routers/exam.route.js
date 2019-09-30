@@ -8,8 +8,9 @@ router.post("/addExam", auth, async(req, res)=>{
     try {
         await exam.save()
         res.status(200).send(exam)
-    } catch (error) {
-        res.status(401).send(error)    
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -20,8 +21,9 @@ router.post("/getExams", async(req,res)=>{
             throw new Error("No exams found");
         }
         res.status(200).send(exams)
-    } catch (error) {
-        res.status(401).send(error)
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -33,8 +35,9 @@ router.post("/getExam", async(req,res)=>{
         }
         res.status(200).send(exam)
         
-    } catch (error) {
-        res.status(401).send(error)
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 })
 
@@ -45,8 +48,9 @@ router.post("/editExam", auth, async(req,res)=>{
             throw new Error("No exam found");
         }
         res.status(200).send(exam)
-    } catch (error) {
-        res.status(401).send(error)    
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -58,9 +62,10 @@ router.post("/deleteExam", auth, async(req,res)=>{
             throw new Error("No exams found");
         }  
         res.status(200).send(exam)
-    } catch (error) {
-        res.status(401).send(error)    
-    } 
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }
 });
 
 module.exports = router

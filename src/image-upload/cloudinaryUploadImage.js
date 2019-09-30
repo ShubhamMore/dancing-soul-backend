@@ -40,7 +40,8 @@ const uploadImageToCloude = async (filePath, fileName, cloudeDirectory) => {
         return {upload_res, upload_err, file_err};
     }
     catch(e) {
-        throw new Error("Something bad happen, While uploading the file" + e)
+        const err = "Something bad happen while uploading image file, " + e;
+        throw new Error(err.replace('Error: ', ''));
     }
 }
 

@@ -52,8 +52,8 @@ router.post('/login', async (req, res) => {
         }
         res.send(data)
     } catch (e) {
-        let err = ""+e;
-        res.status(400).send(err.replace('Error: ', ''))
+        const err = "" + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 })
 

@@ -9,9 +9,9 @@ router.post("/addNews", auth, async (req, res) =>{
     try {
         await news.save()      
         res.status(200).send({success : true})  
-    } catch (error) {
-        let err = "Something bad happend";
-        res.status(400).send(err)
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -22,9 +22,9 @@ router.post("/getAllNews", async(req, res)=>{
             throw new Error("No news found");
         }
         res.status(200).send(allNews)
-    } catch (error) {
-        console.log(error)
-        res.status(401).send(error)
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -34,11 +34,10 @@ router.post("/getNews", async(req,res)=>{
         if(!news) {
             throw new Error("No news found");
         }
-        res.status(200).send(news)
-        
-    } catch (error) {
-        console.log(error)
-        res.status(401).send(error)
+        res.status(200).send(news)   
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -49,9 +48,9 @@ router.post("/editNews", auth, async(req, res)=>{
             throw new Error("No news found");
         }
         res.status(200).send(news)
-    } catch (error) {
-        console.log(error)
-        res.status(401).send(error)    
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -63,9 +62,10 @@ router.post("/deleteNews", auth, async (req, res)=>{
             throw new Error("No news found");
         }  
         res.status(200).send({success : true})
-    } catch (error) {
-        res.status(401).send(error)    
-    } 
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }
 });
 
 module.exports = router;

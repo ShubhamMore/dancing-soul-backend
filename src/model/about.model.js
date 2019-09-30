@@ -1,16 +1,19 @@
 const mongoose = require('mongoose')
 
 const aboutSchema = new mongoose.Schema({
-    aim:{
-        type:String
+    aim : {
+        type : String,
+        required : true
     },
-    history:{
-        type:String
+    history : {
+        type : String,
+        required : true
     },
-    philosophy:{
-        type:String
+    philosophy : {
+        type : String,
+        required : true
     }
 })
 
-const About = mongoose.model('abouts',aboutSchema)
+const About = mongoose.model('abouts', aboutSchema)
 module.exports = About

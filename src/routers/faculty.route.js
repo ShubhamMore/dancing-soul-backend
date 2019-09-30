@@ -90,11 +90,12 @@ router.post("/addFaculty", auth, multer({ storage: storage }).single("image"), a
 
         res.status(200).send(user)  
     } catch (e) {
-        let err = "Something bad happend";
+        let err = "Something bad happend, ";
         if(e.code == 11000) {
-            err = "User alredy register";
+            err = "User alredy register, ";
         }
-        res.status(400).send(err + e)
+        err = err + e;
+        res.status(400).send(err.replace('Error: ', ''));        
     }
 });
 
@@ -105,9 +106,9 @@ router.post("/getFaculties", auth, async(req,res)=>{
             throw new Error("No Faculty found");
         }
         res.status(200).send(faculties)
-    } catch (error) {
-        console.log(error)
-        res.status(401).send(error)
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -118,9 +119,9 @@ router.post("/getActivateFaculties", async(req,res)=>{
             throw new Error("No Faculty found");
         }
         res.status(200).send(faculties)
-    } catch (error) {
-        console.log(error)
-        res.status(401).send(error)
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -132,9 +133,9 @@ router.post("/getFaculty", auth, async(req,res)=>{
         }
         res.status(200).send(faculty)
         
-    } catch (error) {
-        console.log(error)
-        res.status(401).send(error)
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -180,9 +181,9 @@ router.post("/changeFacultyStatus", auth, async(req, res)=>{
         }
 
         res.status(200).send(faculty)
-    } catch (error) {
-        console.log(error)
-        res.status(401).send(error)    
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -247,9 +248,9 @@ router.post("/editFaculty", auth, multer({ storage: storage }).single("image"), 
         await Faculty.findByIdAndUpdate(data._id, facultyData);
 
         res.status(200).send({success: true})
-    } catch (error) {
-        console.log(error)
-        res.status(401).send(error)    
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
@@ -276,9 +277,10 @@ router.post("/deleteFaculty", auth, async (req,res)=>{
         await User.findByIdAndDelete(user._id);
         
         res.status(200).send({success : true})
-    } catch (error) {
-        res.status(401).send(error)    
-    } 
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }
 });
 
 module.exports = router;

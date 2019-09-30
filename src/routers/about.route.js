@@ -8,8 +8,9 @@ router.post('/addAbout', auth, async(req, res)=>{
     try {
         await about.save();
         res.status(200).send(about)
-    } catch (error) {
-        res.status(401).send(error)
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }   
 });
 
@@ -20,8 +21,9 @@ router.post('/getAbout', async(req, res)=>{
             throw new Error("No About Info Found");
         }
         res.status(200).send(about)
-    } catch (error) {
-        res.status(401).send(error)
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }   
 });
 
@@ -32,8 +34,9 @@ router.post('/editAbout', auth, async(req, res)=>{
             throw new Error("No About Info Found");
         }
         res.status(200).send(about)
-    } catch (error) {
-        res.status(401).send(error)
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }   
 });
 

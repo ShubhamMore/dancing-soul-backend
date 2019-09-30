@@ -47,9 +47,9 @@ router.post('/addImages',  multer({ storage: storage }).array("image"), async (r
             }
         
             res.status(200).send({responce, upload_responce})
-        }
-        catch(e) {
-            res.status(400).send(e);
+        } catch (e) {
+            const err = "Something bad happen, " + e;
+            res.status(400).send(err.replace('Error: ', ''));
         }
     }
     else {
@@ -83,9 +83,9 @@ router.post('/addImage', auth, multer({ storage: storage }).single("image"), asy
         const responce = await gallery.save();
 
         res.status(200).send({responce, upload_responce})
-    }
-    catch(e) {
-        res.status(400).send(e);
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 })
 
@@ -94,9 +94,9 @@ router.post("/getImages", async (req, res) => {
     try {
         const images = await Gallery.find();
         res.status(200).send(images)
-    }
-    catch(e) {
-        res.status(400).send(e)
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 })
 
@@ -109,9 +109,9 @@ router.post("/removeImage", auth, async (req, res) => {
         const responce = await cloudinaryRemoveImage(public_id);
 
         res.status(200).send(responce)
-    }
-    catch(e) {
-        res.status(400).send(e)
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
     }
 })
 
