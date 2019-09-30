@@ -17,7 +17,7 @@ router.post("/addReceipt", auth, async (req,res) =>{
 
 router.post("/getReceipts", auth, async(req, res)=>{
     try {
-        const receipts = await Receipt.find()
+        const receipts = await Receipt.find({student : req.body.student})
         if(!receipts) {
             throw new Error("No Receipt found");
         }

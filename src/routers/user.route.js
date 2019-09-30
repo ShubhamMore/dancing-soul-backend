@@ -34,13 +34,14 @@ router.post('/login', async (req, res) => {
         
         const token = await user.generateAuthToken()
         let _id = user._id;
+
         if(user.userType == "student") {
             const student = await Student.find({email : user.email});
-            _id = student._id;
+            _id = student[0]._id;
         }
         else if(user.userType == "faculty") {
             const faculty = await Faculty.find({email : user.email});
-            _id = faculty._id;
+            _id = faculty[0]._id;
         }
         const data = {
             _id : _id,

@@ -16,7 +16,7 @@ router.post("/saveAttendance", auth, async (req, res)=>{
 
 router.post("/getAttendance", auth, async (req, res)=>{
     try {
-        const attendance = await Attendance.findById({branch : req.body.branch, batch : req.body.batch, batchType : req.body.batchType});
+        const attendance = await Attendance.find({branch : req.body.branch, batch : req.body.batch, batchType : req.body.batchType});
         if(!attendance) {
             throw new Error("No attendance Found");
         }
