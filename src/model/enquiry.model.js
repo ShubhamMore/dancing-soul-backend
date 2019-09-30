@@ -16,6 +16,10 @@ const enquirySchema = new mongoose.Schema({
     message : {
         type : String,
         required : true
+    },
+    seen : {
+        type : String,
+        required : true
     }
 })
 const Enquiry = mongoose.model('enquiry', enquirySchema)

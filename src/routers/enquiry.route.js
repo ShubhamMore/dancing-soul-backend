@@ -60,6 +60,20 @@ router.post('/replyEnquiry', auth, async (req, res) => {
 });
 
 
+router.post('/getUnseenEnquiries', auth, async (req, res)=>{
+    try {
+        const enquiries = await Enquiry.find({seen : "0"});
+        if(!enquiries) {
+            throw new Error("No Enquiry Found");
+        }
+
+        res.status(200).send({ unseenEnquiries : enquiries.length})
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }
+});
+
 router.post('/getEnquiries', auth, async (req, res)=>{
     try {
         const enquiries = await Enquiry.find();
@@ -68,6 +82,20 @@ router.post('/getEnquiries', auth, async (req, res)=>{
         }
 
         res.status(200).send(enquiries)
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }
+});
+
+router.post('/enquirySeen', auth, async (req, res)=>{
+    try {
+        const enquiry = await Enquiry.findByIdAndUpdate(req.body._id, {seen : "1"});
+        if(!enquiry) {
+            throw new Error("No Enquiry Found");
+        }
+
+        res.status(200).send({success : true})
     } catch (e) {
         const err = "Something bad happen, " + e;
         res.status(400).send(err.replace('Error: ', ''));
