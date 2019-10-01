@@ -16,14 +16,16 @@ const sendMail = async (mail) => {
         }
     });
 
-    // send mail with defined transport object
-    let info = await transporter.sendMail({
+    const mailOptions = {
         from: mail.from, // sender address
         to: mail.to, // list of receivers
         subject: mail.subject, // Subject line
         text: mail.text, // plain text body
         html: mail.html // html body
-    });
+    }
+
+    // send mail with defined transport object
+    let info = await transporter.sendMail(mailOptions);
 
     console.log('Message sent: %s', info.messageId);
     // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>

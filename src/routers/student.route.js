@@ -90,10 +90,10 @@ router.post("/addStudent", auth, multer({ storage: storage }).single("image"), a
         await student.save()
         
         const mail = {
-            from : "shubhammore.developer@gmail.com",
-            to : "shubhammore1796@gmail.com",
+            from : provess.env.ADMIN_MAIL,
+            to : student.email,
             subject : "Welcome to Dancing Soul",
-            text : "Welcome Shubham",
+            text : "Welcome " + student.name,
             html : "<b>Welcome</b>" + student.name +"<br>Userid : " + student.email +"<br>Password : " + student.phone
         }
 
@@ -232,10 +232,10 @@ router.post('/changeStudentStatus', auth, async (req, res) => {
             }
             await User.findByIdAndRemove(user._id);
             const mail = {
-                from : "shubhammore.developer@gmail.com",
-                to : "shubhammore1796@gmail.com",
+                from : provess.env.ADMIN_MAIL,
+                to : student.email,
                 subject : "Thanks for using Dancing Soul",
-                text : "Thanks",
+                text : "Thanks " + student.name,
                 html : "<b>Thanks</b> " + student.name +" You are no longer part of dancing Soul Acadamy, Thanks for Supporting Us.."
             }
             await sendMail(mail);
@@ -249,10 +249,10 @@ router.post('/changeStudentStatus', auth, async (req, res) => {
             })
             await user.save();
             const mail = {
-                from : "shubhammore.developer@gmail.com",
-                to : "shubhammore1796@gmail.com",
-                subject : "Welcome to Dancing Soul",
-                text : "Welcome Back Shubham",
+                from : provess.env.ADMIN_MAIL,
+                to : student.name,
+                subject : "Welcome back " + student.name + " to Dancing Soul Acadamy",
+                text : "Welcome Back " + student.name,
                 html : "<b>Welcome back </b>" + student.name +"<br>Userid : " + student.email +"<br>Password : " + student.phone
             }
             await sendMail(mail);

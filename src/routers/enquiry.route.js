@@ -10,22 +10,21 @@ router.post('/sendEnquiry', async (req, res) => {
     const enquiry = new Enquiry(req.body)
     try {
         await enquiry.save()
-        // send enquiry to mail
 
-        // const mail = {
-        //     from : enquiry.from,
-        //     to : "shubhammore1796@gmail.com",
-        //     subject : "Welcome to Nodemailer",
-        //     text : "",
-        //     html : "<b>Welcome</b>"
-        // }
-
-        // sendMail(mail)
-
-        const data = {
-            success : true
+        const mail = {
+            from : enquiry.email,
+            to : process.env.ENQUIRY_MAIL,
+            subject : `Enquiry from ${enquiry.name}`,
+            text : `Reply to : ${enquiry.email}`,
+            html: `<p>Hello,<br>My name is ${enquiry.name},<br>
+                  my contact is ${enquiry.phone}<br>
+                  and my email address is ${enquiry.email}<br>
+                  and I would like to discuss about ${enquiry.message}.</p>`
         }
-        res.status(200).send(data)
+
+        await sendMail(mail)
+
+        res.status(200).send({success : true})
     } catch (e) {
         const err = "Something bad happen, " + e;
         res.status(400).send(err.replace('Error: ', ''));
@@ -34,19 +33,18 @@ router.post('/sendEnquiry', async (req, res) => {
 
 router.post('/replyEnquiry', auth, async (req, res) => {
 
-    // const reply = new Enquiry(req.body)
+    const reply = req.body;
     try {
-        // send enquiry to mail
 
-        // const mail = {
-        //     from : "shubhammore.developer@gmail.com",
-        //     to : "shubhammore1796@gmail.com",
-        //     subject : "Welcome to Nodemailer",
-        //     text : "Welcome Shubham",
-        //     html : "<b>Welcome</b>"
-        // }
+        const mail = {
+            from : process.env.ENQUIRY_MAIL,
+            to : reply.to,
+            subject : reply.subject,
+            text : "Thanks for Contacting us..",
+            html : `Thanks for Contacting us..,<br>${reply.message}`
+        }
 
-        // sendMail(mail)
+        await sendMail(mail)
 
         const data = {
             success : true

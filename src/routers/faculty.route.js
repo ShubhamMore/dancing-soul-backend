@@ -79,11 +79,11 @@ router.post("/addFaculty", auth, multer({ storage: storage }).single("image"), a
         await faculty.save()
         
         const mail = {
-            from : "shubhammore.developer@gmail.com",
-            to : "shubhammore1796@gmail.com",
+            from : provess.env.ADMIN_MAIL,
+            to : faculty.email,
             subject : "Welcome to Dancing Soul",
-            text : "Welcome Shubham",
-            html : "<b>Welcome</b>" + faculty.name +"<br>Userid : " + faculty.email +"<br>Password : " + faculty.phone
+            text : "Welcome " + faculty.name,
+            html : "<b>Welcome</b>" + faculty.name +"<br>User Name : " + faculty.email +"<br>Password : " + faculty.phone
         }
 
         await sendMail(mail);
@@ -154,10 +154,10 @@ router.post("/changeFacultyStatus", auth, async(req, res)=>{
             }
             await User.findByIdAndRemove(user._id);
             const mail = {
-                from : "shubhammore.developer@gmail.com",
-                to : "shubhammore1796@gmail.com",
-                subject : "Thanks for using Dancing Soul",
-                text : "Thanks",
+                from : provess.env.ADMIN_MAIL,
+                to : faculty.email,
+                subject : "Thanks for being part of Dancing Soul",
+                text : "Thanks " + faculty.name,
                 html : "<b>Thanks</b> " + faculty.name +" You are no longer part of dancing Soul Acadamy, Thanks for Supporting Us.."
             }
             await sendMail(mail);
@@ -171,10 +171,10 @@ router.post("/changeFacultyStatus", auth, async(req, res)=>{
             })
             await user.save();
             const mail = {
-                from : "shubhammore.developer@gmail.com",
-                to : "shubhammore1796@gmail.com",
+                from : provess.env.ADMIN_MAIL,
+                to : faculty.email,
                 subject : "Welcome to Dancing Soul",
-                text : "Welcome Back Shubham",
+                text : "Welcome Back " + faculty.name,
                 html : "<b>Welcome back </b>" + faculty.name +"<br>Userid : " + faculty.email +"<br>Password : " + faculty.phone
             }
             await sendMail(mail);

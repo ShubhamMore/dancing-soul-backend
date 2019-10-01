@@ -79,9 +79,9 @@ router.post('/forgotPassword', async (req, res) => {
         const link = process.env.MAIL_URI+"/#/reset_password?token="+token;
 
         const mail = {
-            from : "shubhammore.developer@gmail.com",
+            from : provess.env.ADMIN_MAIL,
             to : user.email,
-            subject : "Reset Password Link",
+            subject : "Reset Password Link for Dancing Soul",
             text : link
         }
             
