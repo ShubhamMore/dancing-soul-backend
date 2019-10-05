@@ -225,9 +225,6 @@ router.post('/changeStudentStatus', auth, async (req, res) => {
         if(!student) {
             throw new Error("Student Updation Failed");
         }
-        
-        console.log("12345")
-
 
         if(req.body.status === "0") {
             const user = await User.findOne({email : student.email});
@@ -254,7 +251,7 @@ router.post('/changeStudentStatus', auth, async (req, res) => {
             await user.save();
             const mail = {
                 from : process.env.ADMIN_MAIL,
-                to : student.name,
+                to : student.email,
                 subject : "Welcome back " + student.name + " to Dancing Soul Acadamy",
                 text : "Welcome Back " + student.name,
                 html : "<b>Welcome back </b>" + student.name +"<br>Userid : " + student.email +"<br>Password : " + student.phone
@@ -263,7 +260,6 @@ router.post('/changeStudentStatus', auth, async (req, res) => {
         }
         res.status(200).send({succes : true});
     } catch (e) {
-        console.log(e)
         const err = "Something bad happen, " + e;
         res.status(400).send(err.replace('Error: ', ''));
     }
@@ -272,25 +268,30 @@ router.post('/changeStudentStatus', auth, async (req, res) => {
 router.post("/deleteStudent", auth, async (req,res)=>{
     
     try {
-
-        const user = await User.findByCredentials(req.user.email, req.body.password)
+        // Authenticate user with password
+        let user = await User.findByCredentials(req.user.email, req.body.password)
         if(!user) {
             throw new Error("Wrong Password, Please enter correct password");
         }
-
+        // Find Student
         const student = await Student.findById(req.body._id) 
         if(!student) {
             throw new Error("No student found");
         } 
-
+        // Delete Cloude Image
         if(student.image.public_id !== user_image.public_id) {
             await cloudinaryRemoveImage(student.image.public_id);
         }
-
-        await Receipt.deleteMany({student : req.body._id});
-
-        await User.findByIdAndRemove(user._id);
+        // Delete Student
+        await Student.findByIdAndRemove(student._id);
         
+        // Delete Student Receipts
+        await Receipt.deleteMany({student : req.body._id});
+        // Find student in user
+        user = await User.findOne({email : student.email});
+        // Delete student in user
+        await User.findByIdAndRemove(user._id);
+        // Send Responce
         res.status(200).send({success : true})
     } catch (e) {
         const err = "Something bad happen, " + e;

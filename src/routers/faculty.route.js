@@ -258,7 +258,7 @@ router.post("/deleteFaculty", auth, async (req,res)=>{
     
     try {
 
-        const user = await User.findByCredentials(req.user.email, req.body.password)
+        let user = await User.findByCredentials(req.user.email, req.body.password)
         if(!user) {
             throw new Error("Wrong Password, Please enter correct password");
         }
@@ -273,6 +273,8 @@ router.post("/deleteFaculty", auth, async (req,res)=>{
         }
 
         await Faculty.findByIdAndDelete(req.body._id)
+
+        user = await User.findOne({email : faculty.email});
 
         await User.findByIdAndDelete(user._id);
         
