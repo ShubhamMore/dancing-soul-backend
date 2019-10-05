@@ -284,10 +284,6 @@ router.post("/deleteStudent", auth, async (req,res)=>{
 
         await Receipt.deleteMany({student : req.body._id});
 
-        const student = await Student.findByIdAndDelete(req.body._id);
-
-        const user = await User.findOne({email : student.email});
-
         await User.findByIdAndRemove(user._id);
         
         res.status(200).send({success : true})
