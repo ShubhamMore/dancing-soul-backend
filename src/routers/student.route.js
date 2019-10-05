@@ -90,7 +90,7 @@ router.post("/addStudent", auth, multer({ storage: storage }).single("image"), a
         await student.save()
         
         const mail = {
-            from : provess.env.ADMIN_MAIL,
+            from : process.env.ADMIN_MAIL,
             to : student.email,
             subject : "Welcome to Dancing Soul",
             text : "Welcome " + student.name,
@@ -220,10 +220,14 @@ router.post("/editStudent", auth, multer({ storage: storage }).single("image"), 
 
 router.post('/changeStudentStatus', auth, async (req, res) => {
     try {
+        
         const student = await Student.findByIdAndUpdate(req.body._id, {status : req.body.status});
         if(!student) {
             throw new Error("Student Updation Failed");
         }
+        
+        console.log("12345")
+
 
         if(req.body.status === "0") {
             const user = await User.findOne({email : student.email});
@@ -232,11 +236,11 @@ router.post('/changeStudentStatus', auth, async (req, res) => {
             }
             await User.findByIdAndRemove(user._id);
             const mail = {
-                from : provess.env.ADMIN_MAIL,
+                from : process.env.ADMIN_MAIL,
                 to : student.email,
                 subject : "Thanks for using Dancing Soul",
                 text : "Thanks " + student.name,
-                html : "<b>Thanks</b> " + student.name +" You are no longer part of dancing Soul Acadamy, Thanks for Supporting Us.."
+                html : "<b>Thanks</b> " + student.name + " You are no longer part of dancing Soul Acadamy, Thanks for Supporting Us.."
             }
             await sendMail(mail);
         }
@@ -249,7 +253,7 @@ router.post('/changeStudentStatus', auth, async (req, res) => {
             })
             await user.save();
             const mail = {
-                from : provess.env.ADMIN_MAIL,
+                from : process.env.ADMIN_MAIL,
                 to : student.name,
                 subject : "Welcome back " + student.name + " to Dancing Soul Acadamy",
                 text : "Welcome Back " + student.name,
@@ -259,6 +263,7 @@ router.post('/changeStudentStatus', auth, async (req, res) => {
         }
         res.status(200).send({succes : true});
     } catch (e) {
+        console.log(e)
         const err = "Something bad happen, " + e;
         res.status(400).send(err.replace('Error: ', ''));
     }

@@ -79,7 +79,7 @@ router.post("/addFaculty", auth, multer({ storage: storage }).single("image"), a
         await faculty.save()
         
         const mail = {
-            from : provess.env.ADMIN_MAIL,
+            from : process.env.ADMIN_MAIL,
             to : faculty.email,
             subject : "Welcome to Dancing Soul",
             text : "Welcome " + faculty.name,
@@ -154,7 +154,7 @@ router.post("/changeFacultyStatus", auth, async(req, res)=>{
             }
             await User.findByIdAndRemove(user._id);
             const mail = {
-                from : provess.env.ADMIN_MAIL,
+                from : process.env.ADMIN_MAIL,
                 to : faculty.email,
                 subject : "Thanks for being part of Dancing Soul",
                 text : "Thanks " + faculty.name,
@@ -171,7 +171,7 @@ router.post("/changeFacultyStatus", auth, async(req, res)=>{
             })
             await user.save();
             const mail = {
-                from : provess.env.ADMIN_MAIL,
+                from : process.env.ADMIN_MAIL,
                 to : faculty.email,
                 subject : "Welcome to Dancing Soul",
                 text : "Welcome Back " + faculty.name,
