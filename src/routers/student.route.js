@@ -9,6 +9,7 @@ const cloudinaryRemoveImage = require("../image-upload/cloudinaryRemoveImage")
 const cloudinaryUploadImage = require("../image-upload/cloudinaryUploadImage")
 
 const Student = require('../model/student.model')
+const Branch = require('../model/branch.model')
 const Receipt = require('../model/receipt.model')
 const User = require("../model/user.model")
 
@@ -130,6 +131,59 @@ router.post('/getStudent', auth, async (req, res) => {
             throw new Error("No Student Found");
         }
         res.status(200).send(student);
+    } catch (e) {
+        let err = "Something bad happen, ";
+        if(e.name === "CastError") {
+            err = "No Student Found, ";
+        }
+        err = err + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }
+})
+
+router.post('/getStudentForReceipt', auth, async (req, res) => {
+    try {
+        const student = await Student.findById(req.body._id);
+        if(!student) {
+            throw new Error("No Student Found");
+        }
+
+        const branch = await Branch.findById(student.branch);
+        if(!branch) {
+            throw new Error("No Branch Found");
+        }
+
+        const batch = branch.batch.find((batch) => (batch._id === student.batchName));
+
+        const studentMetadata = {
+            branch: branch.branchName,
+            batch
+        }
+
+        res.status(200).send({student, studentMetadata});
+    } catch (e) {
+        let err = "Something bad happen, ";
+        if(e.name === "CastError") {
+            err = "No Student Found, ";
+        }
+        err = err + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }
+})
+
+router.post('/getStudentForEditing', auth, async (req, res) => {
+    try {
+        const student = await Student.findById(req.body._id);
+        if(!student) {
+            throw new Error("No Student Found");
+        }
+
+        const branch = await Branch.find();
+        if(branch.length < 1) {
+            throw new Error("No Branch Found");
+        }
+
+        res.status(200).send({student, branch});
     } catch (e) {
         let err = "Something bad happen, ";
         if(e.name === "CastError") {

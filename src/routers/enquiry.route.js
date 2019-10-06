@@ -85,27 +85,26 @@ router.post('/getEnquiries', auth, async (req, res)=>{
     }
 });
 
-router.post('/enquirySeen', auth, async (req, res)=>{
+router.post('/getEnquiry', auth, async (req, res)=>{
     try {
         const enquiry = await Enquiry.findByIdAndUpdate(req.body._id, {seen : "1"});
         if(!enquiry) {
             throw new Error("No Enquiry Found");
         }
 
-        res.status(200).send({success : true})
+        res.status(200).send(enquiry);
     } catch (e) {
         const err = "Something bad happen, " + e;
         res.status(400).send(err.replace('Error: ', ''));
     }
 });
 
-router.post('/getEnquiry', auth, async (req, res)=>{
+router.post('/getEnquiryForReply', auth, async (req, res)=>{
     try {
         const enquiry = await Enquiry.findById(req.body._id);
         if(!enquiry) {
             throw new Error("No Enquiry Found");
         }
-
         res.status(200).send(enquiry)
     } catch (e) {
         const err = "Something bad happen, " + e;
