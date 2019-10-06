@@ -7,8 +7,9 @@ const router = new express.Router()
 router.post("/getStudentsForAttendance", auth, async (req, res) => {
     
     try {
-        const student = await Student.find({branch: req.body.branch, batch: req.body.batch})
-        
+        console.log("dd")
+        const student = await Student.find({branch: req.body.branch, batchName: req.body.batch})
+        console.log(student)
         res.status(200).send(student)
     } catch (e) {
         const err = "Something bad happen, " + e;

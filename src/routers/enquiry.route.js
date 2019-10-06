@@ -38,10 +38,10 @@ router.post('/replyEnquiry', auth, async (req, res) => {
 
         const mail = {
             from : process.env.ENQUIRY_MAIL,
-            to : reply.to,
+            to : reply.email,
             subject : reply.subject,
             text : "Thanks for Contacting us..",
-            html : `Thanks for Contacting us..,<br>${reply.message}`
+            html : `Thanks for Contacting us..,<br>${reply.body}`
         }
 
         await sendMail(mail)

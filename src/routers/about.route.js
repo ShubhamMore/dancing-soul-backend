@@ -17,17 +17,17 @@ router.post('/addAbout', auth, async(req, res)=>{
 router.post('/getAbout', async(req, res)=>{
     try {
         const about = await About.find()
-        if(!about) {
+        if(!about[0]) {
             throw new Error("No About Info Found");
         }
-        res.status(200).send(about)
+        res.status(200).send(about[0])
     } catch (e) {
         const err = "Something bad happen, " + e;
         res.status(400).send(err.replace('Error: ', ''));
     }   
 });
 
-router.post('/editAbout', auth, async(req, res)=>{
+router.post('/saveAbout', auth, async(req, res)=>{
     try {
         const about = await About.findByIdAndUpdate(req.body._id, req.body)
         if(!about) {

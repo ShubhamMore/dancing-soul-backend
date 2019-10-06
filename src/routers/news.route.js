@@ -55,7 +55,6 @@ router.post("/editNews", auth, async(req, res)=>{
 });
 
 router.post("/deleteNews", auth, async (req, res)=>{
-    
     try {
         const news = await News.findByIdAndDelete(req.body._id) 
         if(!news) {

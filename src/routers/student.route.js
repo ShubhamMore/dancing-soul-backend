@@ -113,7 +113,7 @@ router.post("/addStudent", auth, multer({ storage: storage }).single("image"), a
 
 router.post('/getStudents', auth, async (req, res) => {
     try {
-        const students = await Student.find()
+        const students = await Student.find({branch: req.body.branch, batchName: req.body.batch, batch: req.body.weekType})
         if(!students) {
             throw new Error("No Student Found");
         }
@@ -130,7 +130,20 @@ router.post('/getStudent', auth, async (req, res) => {
         if(!student) {
             throw new Error("No Student Found");
         }
-        res.status(200).send(student);
+
+        const branch = await Branch.findById(student.branch);
+        if(!branch) {
+            throw new Error("No Branch Found");
+        }
+
+        const batch = branch.batch.find((curBatch) => (curBatch._id == student.batchName));
+
+        const studentMetaData = {
+            branch: branch.branch,
+            batch
+        }
+
+        res.status(200).send({student, studentMetaData});
     } catch (e) {
         let err = "Something bad happen, ";
         if(e.name === "CastError") {
@@ -153,14 +166,14 @@ router.post('/getStudentForReceipt', auth, async (req, res) => {
             throw new Error("No Branch Found");
         }
 
-        const batch = branch.batch.find((batch) => (batch._id === student.batchName));
+        const batch = branch.batch.find((batch) => (batch._id == student.batchName));
 
-        const studentMetadata = {
-            branch: branch.branchName,
+        const studentMetaData = {
+            branch: branch.branch,
             batch
         }
 
-        res.status(200).send({student, studentMetadata});
+        res.status(200).send({student, studentMetaData});
     } catch (e) {
         let err = "Something bad happen, ";
         if(e.name === "CastError") {
@@ -193,7 +206,6 @@ router.post('/getStudentForEditing', auth, async (req, res) => {
         res.status(400).send(err.replace('Error: ', ''));
     }
 })
-
 
 router.post("/editStudent", auth, multer({ storage: storage }).single("image"), async(req,res)=>{
 
@@ -319,10 +331,11 @@ router.post('/changeStudentStatus', auth, async (req, res) => {
     }
 });
 
-router.post("/deleteStudent", auth, async (req,res)=>{
+router.post("/deleteStudent", auth, async (req, res)=>{
     
     try {
         // Authenticate user with password
+        console.log("received")
         let user = await User.findByCredentials(req.user.email, req.body.password)
         if(!user) {
             throw new Error("Wrong Password, Please enter correct password");
