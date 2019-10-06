@@ -48,7 +48,9 @@ router.post('/addBranch', auth, multer({ storage: storage }).array("image"), asy
                             image_name : upload_res[i].original_filename + "." + upload_res[i].format,
                             secure_url : upload_res[i].secure_url,
                             public_id : upload_res[i].public_id,
-                            created_at : upload_res[i].created_at
+                            created_at : upload_res[i].created_at,
+                            width: upload_res[i].width,
+                            height: upload_res[i].height
                         }
                         images.push(img_data);
                     }
@@ -165,7 +167,9 @@ router.post('/editBranch', auth, multer({ storage: storage }).array("image"), as
                             image_name : upload_res[i].original_filename + "." + upload_res[i].format,
                             secure_url : upload_res[i].secure_url,
                             public_id : upload_res[i].public_id,
-                            created_at : upload_res[i].created_at
+                            created_at : upload_res[i].created_at,
+                            width: upload_res[i].width,
+                            height: upload_res[i].height
                         }
                         images.push(img_data);
                     }

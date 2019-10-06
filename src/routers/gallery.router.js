@@ -9,6 +9,9 @@ const cloudinaryUploadImage = require("../image-upload/cloudinaryUploadImage")
 const cloudinaryUploadImages = require("../image-upload/cloudinaryUploadImages")
 const cloudinaryRemoveImage = require("../image-upload/cloudinaryRemoveImage")
 
+const fs = require("fs")
+const path = require("path")
+
 const router = new express.Router()
 
 router.post('/addImages',  multer({ storage: storage }).array("image"), async (req, res) => {
@@ -38,7 +41,9 @@ router.post('/addImages',  multer({ storage: storage }).array("image"), async (r
                         image_name : upload_res[i].original_filename + "." + upload_res[i].format,
                         secure_url : upload_res[i].secure_url,
                         public_id : upload_res[i].public_id,
-                        created_at : upload_res[i].created_at
+                        created_at : upload_res[i].created_at,
+                        width: upload_res[i].width,
+                        height: upload_res[i].height
                     }
                     const gallery = new Gallery(img_data);
                     const res = await gallery.save();
@@ -75,7 +80,9 @@ router.post('/addImage', auth, multer({ storage: storage }).single("image"), asy
             image_name : upload_res.original_filename + "." + upload_res.format,
             secure_url : upload_res.secure_url,
             public_id : upload_res.public_id,
-            created_at : upload_res.created_at
+            created_at : upload_res.created_at,
+            width: upload_res.width,
+            height: upload_res.height
         }
 
         const gallery = new Gallery(img_data);
@@ -93,6 +100,30 @@ router.post("/getImages", async (req, res) => {
     
     try {
         const images = await Gallery.find();
+        res.status(200).send(images)
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }
+})
+
+router.post("/getAllImages", async (req, res) => {
+    
+    try {
+        
+        const images = await Gallery.find({}, {_id: 0, secure_url: 1, width: 1, height: 1});
+
+        const saveImages = new Array();
+        images.forEach((curImage) => {
+            const image = {
+                path: curImage.secure_url,
+                width: curImage.width,
+                height: curImage.height
+            }
+            saveImages.push(image);
+        });
+       const imagePath = path.join(__dirname, "../../", "images/images.json");
+        fs.writeFileSync(imagePath, JSON.stringify(saveImages));
         res.status(200).send(images)
     } catch (e) {
         const err = "Something bad happen, " + e;

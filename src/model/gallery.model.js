@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+
 var gallertSchema = mongoose.Schema({
     image_name : {
         type : String,
@@ -15,6 +16,15 @@ var gallertSchema = mongoose.Schema({
     created_at : {
         type : String,
         default : Date.now.toString()
+    },
+    width: {
+        type : String,
+        require: true
+    },
+    height: {
+        type : String,
+        require: true
     }
 })
+
 module.exports = mongoose.model('gallery', gallertSchema)

@@ -50,7 +50,9 @@ router.post("/addFaculty", auth, multer({ storage: storage }).single("image"), a
                         image_name : upload_res.original_filename + "." + upload_res.format,
                         secure_url : upload_res.secure_url,
                         public_id : upload_res.public_id,
-                        created_at : upload_res.created_at
+                        created_at : upload_res.created_at,
+                        width: upload_res.width,
+                        height: upload_res.height
                     }
                     image = img_data;
                     
@@ -219,7 +221,9 @@ router.post("/editFaculty", auth, multer({ storage: storage }).single("image"), 
                         image_name : upload_res.original_filename + "." + upload_res.format,
                         secure_url : upload_res.secure_url,
                         public_id : upload_res.public_id,
-                        created_at : upload_res.created_at
+                        created_at : upload_res.created_at,
+                        width: upload_res.width,
+                        height: upload_res.height
                     }
                     image = img_data;
                 }
