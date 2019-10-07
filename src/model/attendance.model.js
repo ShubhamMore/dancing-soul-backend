@@ -1,34 +1,36 @@
 const mongoose = require('mongoose')
-
 const attendanceSchema = new mongoose.Schema({
-    date : {
-        type : String,
-        required : true
+    date: {
+        type:String,
+        required:true
     },
-    branch : {
-        type : String,
-        required : true
-    },
-    batch : {
-        type : String,
-        required : true
-    },
-    batchType : {
-        type : String,
-        required : true
-    },
-    present : [
+    branch: {
+        type:String,
+        required:true
+    }, 
+    batch: {
+        type:String,
+        required:true
+    }, 
+    batchType: {
+        type:String,
+        required:true
+    }, 
+    attendance: [
         {
-            type : String 
+            student: {
+                type: mongoose.Schema.Types.ObjectId,
+                require: true
+            },
+            attendanceStatus: {
+                type: String,
+                require: true
+            }
         }
-    ],
-    absent : [
-       { 
-           type : String
-       }
     ]
-})
+});
 
-const Attendance = mongoose.model('attendances', attendanceSchema)
+
+const Attendance = mongoose.model('Attendance', attendanceSchema)
 
 module.exports = Attendance

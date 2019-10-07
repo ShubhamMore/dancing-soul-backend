@@ -1,6 +1,8 @@
 const express = require('express')
 const auth = require('../middleware/auth')
 const Receipt = require('../model/receipt.model')
+const Student = require('../model/student.model')
+const Branch = require('../model/branch.model')
 const router = new express.Router()
 
 router.post("/addReceipt", auth, async (req,res) =>{
@@ -34,7 +36,26 @@ router.post("/getReceipt", auth, async(req,res)=>{
         if(!receipt) {
             throw new Error("No Receipt found");
         }
-        res.status(200).send(receipt)
+
+        const student = await Student.findById(receipt.student);
+        if(!student) {
+            throw new Error("No Student found");
+        }
+
+        const branch = await Branch.findById(student.branch);
+        if(!branch) {
+            throw new Error("No Branch found");
+        }
+
+        const batch = branch.batch.find((curBatch) => (curBatch._id == student.batchName));
+
+        const receiptMetaData = {
+            name: student.name,
+            branch: branch.branch,
+            batch: batch.batchName,
+            batchType: student.batch
+        }
+        res.status(200).send({receipt, receiptMetaData})
         
     } catch (e) {
         const err = "Something bad happen, " + e;
