@@ -52,16 +52,54 @@ router.post('/addImages',  multer({ storage: storage }).array("image"), async (r
             }
 
             const images = await Gallery.find({}, {_id: 0, secure_url: 1, width: 1, height: 1});            
-
+            
             const saveImages = new Array();
+
             images.forEach((curImage) => {
-                const image = {
+                const devicePreviews = {
+                };
+                        
+                devicePreviews.preview_xxs = {
                     path: curImage.secure_url,
                     width: curImage.width,
                     height: curImage.height
                 }
-                saveImages.push(image);
+                devicePreviews.preview_xs = {
+                    path: curImage.secure_url,
+                    width: curImage.width,
+                    height: curImage.height
+                }
+                devicePreviews.preview_s = {
+                    path: curImage.secure_url,
+                    width: curImage.width,
+                    height: curImage.height
+                }
+                devicePreviews.preview_m = {
+                    path: curImage.secure_url,
+                    width: curImage.width,
+                    height: curImage.height
+                }
+                devicePreviews.preview_l = {
+                    path: curImage.secure_url,
+                    width: curImage.width,
+                    height: curImage.height
+                }
+                devicePreviews.preview_xl = {
+                    path: curImage.secure_url,
+                    width: curImage.width,
+                    height: curImage.height
+                }
+                devicePreviews.raw = {
+                    path: curImage.secure_url,
+                    width: curImage.width,
+                    height: curImage.height
+                }
+
+                saveImages.push(devicePreviews);
             });
+
+            console.log(saveImages)
+
             const imagePath = path.join(__dirname, "../../", "images/images.json");
             fs.writeFileSync(imagePath, JSON.stringify(saveImages));
         
