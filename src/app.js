@@ -1,6 +1,7 @@
 const path = require("path");
 const express = require('express')
 const bodyParser = require("body-parser");
+var cors = require('cors');
 
 require('./database/mongoose')
 
@@ -20,7 +21,7 @@ const userRouter = require('./routers/user.route')
 const app = express()
 
 app.use(express.json())
-
+app.use(cors());
 app.use("/images", express.static(path.join("images")));
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json());
