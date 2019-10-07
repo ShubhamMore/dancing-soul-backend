@@ -14,6 +14,60 @@ const path = require("path")
 
 const router = new express.Router()
 
+const writeImagesToFile = async() => {
+    
+    const images = await Gallery.find({}, {_id: 0, secure_url: 1, width: 1, height: 1});            
+            
+    const saveImages = new Array();
+
+    images.forEach((curImage) => {
+        const devicePreviews = {
+        };
+                
+        devicePreviews.preview_xxs = {
+            path: curImage.secure_url,
+            width: curImage.width,
+            height: curImage.height
+        }
+        devicePreviews.preview_xs = {
+            path: curImage.secure_url,
+            width: curImage.width,
+            height: curImage.height
+        }
+        devicePreviews.preview_s = {
+            path: curImage.secure_url,
+            width: curImage.width,
+            height: curImage.height
+        }
+        devicePreviews.preview_m = {
+            path: curImage.secure_url,
+            width: curImage.width,
+            height: curImage.height
+        }
+        devicePreviews.preview_l = {
+            path: curImage.secure_url,
+            width: curImage.width,
+            height: curImage.height
+        }
+        devicePreviews.preview_xl = {
+            path: curImage.secure_url,
+            width: curImage.width,
+            height: curImage.height
+        }
+        devicePreviews.raw = {
+            path: curImage.secure_url,
+            width: curImage.width,
+            height: curImage.height
+        }
+
+        saveImages.push(devicePreviews);
+    });
+
+    const imagePath = path.join(__dirname, "../../", "images/images.json");
+    fs.writeFileSync(imagePath, JSON.stringify(saveImages));
+
+}
+
 router.post('/addImages',  multer({ storage: storage }).array("image"), async (req, res) => {
 
     const file = req.files;
@@ -51,55 +105,7 @@ router.post('/addImages',  multer({ storage: storage }).array("image"), async (r
                 }
             }
 
-            const images = await Gallery.find({}, {_id: 0, secure_url: 1, width: 1, height: 1});            
-            
-            const saveImages = new Array();
-
-            images.forEach((curImage) => {
-                const devicePreviews = {
-                };
-                        
-                devicePreviews.preview_xxs = {
-                    path: curImage.secure_url,
-                    width: curImage.width,
-                    height: curImage.height
-                }
-                devicePreviews.preview_xs = {
-                    path: curImage.secure_url,
-                    width: curImage.width,
-                    height: curImage.height
-                }
-                devicePreviews.preview_s = {
-                    path: curImage.secure_url,
-                    width: curImage.width,
-                    height: curImage.height
-                }
-                devicePreviews.preview_m = {
-                    path: curImage.secure_url,
-                    width: curImage.width,
-                    height: curImage.height
-                }
-                devicePreviews.preview_l = {
-                    path: curImage.secure_url,
-                    width: curImage.width,
-                    height: curImage.height
-                }
-                devicePreviews.preview_xl = {
-                    path: curImage.secure_url,
-                    width: curImage.width,
-                    height: curImage.height
-                }
-                devicePreviews.raw = {
-                    path: curImage.secure_url,
-                    width: curImage.width,
-                    height: curImage.height
-                }
-
-                saveImages.push(devicePreviews);
-            });
-
-            const imagePath = path.join(__dirname, "../../", "images/images.json");
-            fs.writeFileSync(imagePath, JSON.stringify(saveImages));
+            await writeImagesToFile();
         
             res.status(200).send({responce, upload_responce})
         } catch (e) {
@@ -139,6 +145,8 @@ router.post('/addImage', auth, multer({ storage: storage }).single("image"), asy
 
         const responce = await gallery.save();
 
+        await writeImagesToFile();
+
         res.status(200).send({responce, upload_responce})
     } catch (e) {
         const err = "Something bad happen, " + e;
@@ -177,6 +185,8 @@ router.post("/removeImage", auth, async (req, res) => {
         await Gallery.findOneAndRemove({public_id});
         
         const responce = await cloudinaryRemoveImage(public_id);
+
+        await writeImagesToFile();
 
         res.status(200).send(responce)
     } catch (e) {
