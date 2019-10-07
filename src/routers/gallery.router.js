@@ -98,8 +98,6 @@ router.post('/addImages',  multer({ storage: storage }).array("image"), async (r
                 saveImages.push(devicePreviews);
             });
 
-            console.log(saveImages)
-
             const imagePath = path.join(__dirname, "../../", "images/images.json");
             fs.writeFileSync(imagePath, JSON.stringify(saveImages));
         
