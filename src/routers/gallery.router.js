@@ -50,6 +50,20 @@ router.post('/addImages',  multer({ storage: storage }).array("image"), async (r
                     responce.push(res);
                 }
             }
+
+            const images = await Gallery.find({}, {_id: 0, secure_url: 1, width: 1, height: 1});            
+
+            const saveImages = new Array();
+            images.forEach((curImage) => {
+                const image = {
+                    path: curImage.secure_url,
+                    width: curImage.width,
+                    height: curImage.height
+                }
+                saveImages.push(image);
+            });
+            const imagePath = path.join(__dirname, "../../", "images/images.json");
+            fs.writeFileSync(imagePath, JSON.stringify(saveImages));
         
             res.status(200).send({responce, upload_responce})
         } catch (e) {
@@ -113,17 +127,6 @@ router.post("/getAllImages", async (req, res) => {
         
         const images = await Gallery.find({}, {_id: 0, secure_url: 1, width: 1, height: 1});
 
-        const saveImages = new Array();
-        images.forEach((curImage) => {
-            const image = {
-                path: curImage.secure_url,
-                width: curImage.width,
-                height: curImage.height
-            }
-            saveImages.push(image);
-        });
-       const imagePath = path.join(__dirname, "../../", "images/images.json");
-        fs.writeFileSync(imagePath, JSON.stringify(saveImages));
         res.status(200).send(images)
     } catch (e) {
         const err = "Something bad happen, " + e;
