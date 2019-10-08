@@ -30,6 +30,14 @@ const facultySchema = new mongoose.Schema({
         created_at: {
             type: String,
             default: Date.now.toString()
+        },
+        width : {
+            type : String,
+            required : true
+        },
+        height : {
+            type : String,
+            required : true
         }
     },
     email : {
