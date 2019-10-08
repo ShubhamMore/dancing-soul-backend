@@ -193,14 +193,22 @@ router.post("/editFaculty", auth, multer({ storage: storage }).single("image"), 
 
     const file = req.file;
     try {
-        let image;
-
-        const faculty = await Faculty.findById(req.body._id);
+        const data = req.body;
+        
+        const faculty = await Faculty.findById(data._id);
         
         if(!faculty) {
             throw new Error("No Faculty Found");
         }
 
+        const user = await User.findOne({email: faculty.email});
+
+        if(!(user.email == data.email)) {
+            await User.findByIdAndUpdate(user._id, {email: data.email});
+        }
+        
+        let image;
+        
         image = faculty.image;
 
         const img_pub_id = faculty.image.public_id;
@@ -235,8 +243,6 @@ router.post("/editFaculty", auth, multer({ storage: storage }).single("image"), 
             catch(e) {
             }
         }
-
-        const data = req.body;
 
         const facultyData = {
             _id : data._id,

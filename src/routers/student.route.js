@@ -213,13 +213,20 @@ router.post("/editStudent", auth, multer({ storage: storage }).single("image"), 
 
     const file = req.file;
     try {
-        let image;
-
-        const student = await Student.findById(req.body._id);
+        const data = req.body;
+        
+        const student = await Student.findById(data._id);
         
         if(!student) {
             throw new Error("No student Found");
         }
+
+        const user = await User.findOne({email: student.email});
+
+        if(!(user.email == data.email)) {
+            await User.findByIdAndUpdate(user._id, {email: data.email});
+        }
+        let image;
 
         image = student.image;
 
@@ -255,8 +262,6 @@ router.post("/editStudent", auth, multer({ storage: storage }).single("image"), 
             catch(e) {
             }
         }
-
-        const data = req.body;
 
         const studentData = {
             _id : data._id,
