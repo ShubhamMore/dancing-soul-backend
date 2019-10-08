@@ -47,13 +47,13 @@ router.post("/getReceipt", auth, async(req,res)=>{
             throw new Error("No Branch found");
         }
 
-        const batch = branch.batch.find((curBatch) => (curBatch._id == student.batchName));
+        const batch = branch.batch.find((curBatch) => (curBatch._id == student.batch));
 
         const receiptMetaData = {
             name: student.name,
             branch: branch.branch,
-            batch: batch.batchName,
-            batchType: student.batch
+            batch: batch.batch,
+            batchType: student.batchType
         }
         res.status(200).send({receipt, receiptMetaData})
         

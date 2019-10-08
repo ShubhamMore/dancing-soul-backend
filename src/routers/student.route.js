@@ -83,7 +83,7 @@ router.post("/addStudent", auth, multer({ storage: storage }).single("image"), a
             address: data.address, 
             branch: data.branch, 
             batch: data.batch, 
-            batchName: data.batchName, 
+            batchType: data.batchType, 
             status: data.status,
             image : image
         };
@@ -115,7 +115,7 @@ router.post("/addStudent", auth, multer({ storage: storage }).single("image"), a
 
 router.post('/getStudents', auth, async (req, res) => {
     try {
-        const students = await Student.find({branch: req.body.branch, batchName: req.body.batch, batch: req.body.weekType})
+        const students = await Student.find({branch: req.body.branch, batch: req.body.batch, batchType: req.body.weekType})
         if(!students) {
             throw new Error("No Student Found");
         }
@@ -138,7 +138,7 @@ router.post('/getStudent', auth, async (req, res) => {
             throw new Error("No Branch Found");
         }
 
-        const batch = branch.batch.find((curBatch) => (curBatch._id == student.batchName));
+        const batch = branch.batch.find((curBatch) => (curBatch._id == student.batch));
 
         const studentMetaData = {
             branch: branch.branch,
@@ -168,7 +168,7 @@ router.post('/getStudentForReceipt', auth, async (req, res) => {
             throw new Error("No Branch Found");
         }
 
-        const batch = branch.batch.find((batch) => (batch._id == student.batchName));
+        const batch = branch.batch.find((batch) => (batch._id == student.batch));
 
         const studentMetaData = {
             branch: branch.branch,
@@ -279,7 +279,7 @@ router.post("/editStudent", auth, multer({ storage: storage }).single("image"), 
             address: data.address, 
             branch: data.branch, 
             batch: data.batch, 
-            batchName: data.batchName, 
+            batchType: data.batchType, 
             status: data.status,
             image : image
         };

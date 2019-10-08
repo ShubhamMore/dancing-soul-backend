@@ -17,7 +17,7 @@ const checkAttendanceStatus = (attendance, _id) => {
 router.post("/getStudentsForAttendance", auth, async (req, res) => {
     
     try {
-        const student = await Student.find({branch: req.body.branch, batchName: req.body.batch, status: '1'})
+        const student = await Student.find({branch: req.body.branch, batch: req.body.batch, status: '1'})
         res.status(200).send(student)
     } catch (e) {
         const err = "Something bad happen, " + e;

@@ -9,7 +9,7 @@ const receiptSchema = new mongoose.Schema({
         type : String,
         required : true
     },
-    months : {
+    feeDescription : {
         type : String,
         required : true
     },
@@ -20,6 +20,10 @@ const receiptSchema = new mongoose.Schema({
     paymentMode : {
         type : String,
         required : true
+    },
+    feeType : {
+        type : String,
+        default: '0'
     }
 })
 

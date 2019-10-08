@@ -72,7 +72,7 @@ const studentSchema = new mongoose.Schema({
         type : String,
         required : true
     },
-     batchName : {
+     batchType : {
         type : String,
         required : true
     },
