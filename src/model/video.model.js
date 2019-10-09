@@ -15,5 +15,12 @@ var videoSchema = mongoose.Schema({
     }
 })
 
+videoSchema.methods.toJSON = function () {
+    const video = this
+    const videoObject = video.toObject()
+    delete videoObject.__v
+    return videoObject
+}
+
 const Video = mongoose.model('Video', videoSchema)
 module.exports = Video
