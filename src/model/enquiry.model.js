@@ -22,6 +22,6 @@ const enquirySchema = new mongoose.Schema({
         required : true
     }
 })
-const Enquiry = mongoose.model('enquiry', enquirySchema)
+const Enquiry = mongoose.model('Enquiry', enquirySchema)
 
 module.exports = Enquiry

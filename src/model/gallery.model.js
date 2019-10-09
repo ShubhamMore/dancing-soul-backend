@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var gallertSchema = mongoose.Schema({
+var gallerySchema = mongoose.Schema({
     image_name : {
         type : String,
         required : true
@@ -27,4 +27,5 @@ var gallertSchema = mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('gallery', gallertSchema)
+const Gallery = mongoose.model('Gallery', gallerySchema)
+module.exports = Gallery

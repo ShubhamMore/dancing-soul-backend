@@ -3,6 +3,7 @@ const express = require('express')
 
 const auth = require("../middleware/auth")
 const Gallery = require("../model/gallery.model")
+const Video = require("../model/video.model")
 
 const storage = require("../image-upload/multerConfig")
 const cloudinaryUploadImage = require("../image-upload/cloudinaryUploadImage")
@@ -189,6 +190,57 @@ router.post("/removeImage", auth, async (req, res) => {
         await writeImagesToFile();
 
         res.status(200).send(responce)
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }
+})
+
+router.post("/addVideo", auth, async (req, res) => {
+    try {
+        const video = new Video(req.body);
+        await video.save();
+        res.status(200).send({success: true});
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }
+});
+
+router.post("/getVideos", async (req, res) => {
+    try {
+        const video = await Video.find();
+        res.status(200).send(video);
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }
+})
+
+router.post("/getVideo", async (req, res) => {
+    try {
+        const video = await Video.findById(req.body._id);
+
+        if(!video) {
+            throw new Error("No Video Found");
+        }
+
+        res.status(200).send(video);
+    } catch (e) {
+        const err = "Something bad happen, " + e;
+        res.status(400).send(err.replace('Error: ', ''));
+    }
+})
+
+router.post("/removeVideo", auth, async (req, res) => {
+    try {
+        const video = await Video.findByIdAndRemove(req.body._id);
+
+        if(!video) {
+            throw new Error("No Video Found");
+        }
+        
+        res.status(200).send({success: true});
     } catch (e) {
         const err = "Something bad happen, " + e;
         res.status(400).send(err.replace('Error: ', ''));

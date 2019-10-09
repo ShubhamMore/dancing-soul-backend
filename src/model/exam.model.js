@@ -10,6 +10,6 @@ const examSchema = new mongoose.Schema({
     }
 })
 
-const Exam = mongoose.model('exams', examSchema)
+const Exam = mongoose.model('Exam', examSchema)
 
 module.exports = Exam

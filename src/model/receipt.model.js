@@ -27,6 +27,6 @@ const receiptSchema = new mongoose.Schema({
     }
 })
 
-const Receipt = mongoose.model('receipts', receiptSchema)
+const Receipt = mongoose.model('Receipt', receiptSchema)
 
 module.exports = Receipt

@@ -15,5 +15,5 @@ const aboutSchema = new mongoose.Schema({
     }
 })
 
-const About = mongoose.model('abouts', aboutSchema)
+const About = mongoose.model('About', aboutSchema)
 module.exports = About
