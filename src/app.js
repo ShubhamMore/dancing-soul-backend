@@ -16,6 +16,7 @@ const galleryRouter = require('./routers/gallery.router')
 const newsRouter = require('./routers/news.route')
 const receiptRouter = require('./routers/receipt.route')
 const studentRouter = require('./routers/student.route')
+const identityRouter = require('./routers/identity.roure')
 const userRouter = require('./routers/user.route')
 
 const app = express()
@@ -56,6 +57,7 @@ app.use(galleryRouter)
 app.use(newsRouter)
 app.use(receiptRouter)
 app.use(studentRouter)
+app.use(identityRouter)
 app.use(userRouter)
 
 app.use((req, res, next) => {
