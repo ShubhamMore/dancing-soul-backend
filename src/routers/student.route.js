@@ -388,11 +388,9 @@ router.post('/addIdentity', auth, multer({ storage: storage }).array("image"), a
         if(file.length > 0) {
             let imagePaths = new Array();
             let imageNames = new Array();
-            let imageTypes = new Array();
             for(let i=0; i< file.length; i++) {
                 imagePaths.push(file[i].path);
                 imageNames.push(file[i].filename.split(".")[0]);
-                imageTypes.push(file[i].filename.split("-")[0]);
             }
         
             const cloudeDirectory = "identities";
@@ -406,17 +404,8 @@ router.post('/addIdentity', auth, multer({ storage: storage }).array("image"), a
                 if(upload_res_len > 0) {
                     for(let i=0; i<upload_res_len; i++) {
 
-                        let image_type;
-                        imageTypes.forEach((imageType) => {
-                            if(upload_res[i].original_filename.split("-")[0] == imageType) {
-                                image_type = imageType;
-                                return;
-                            }
-                        });
-
                         const img_data = {
                             image_name: upload_res[i].original_filename + "." + upload_res[i].format,
-                            image_type: image_type,
                             secure_url: upload_res[i].secure_url,
                             public_id: upload_res[i].public_id,
                             created_at: upload_res[i].created_at,
@@ -442,6 +431,8 @@ router.post('/addIdentity', auth, multer({ storage: storage }).array("image"), a
 
         const identity = new Identity(identityData)
 
+        console.log(identity)
+
         await identity.save()
         
         res.status(200).send({success : true})
@@ -453,7 +444,8 @@ router.post('/addIdentity', auth, multer({ storage: storage }).array("image"), a
 
 router.post("/getIdentity", auth, async (req, res) => {
     try {
-        const identity = await findOne({student: req.body.stuent});
+        console.log(req.body)
+        const identity = await Identity.findOne({student: req.body.student});
         res.status(200).send(identity);
     } catch (e) {
         const err = "Something bad happen, " + e;
@@ -461,7 +453,7 @@ router.post("/getIdentity", auth, async (req, res) => {
     }
 });
 
-router.post("/editStudent", auth, multer({ storage: storage }).single("image"), async (req, res) => {
+router.post("/editIdentity", auth, multer({ storage: storage }).array("image"), async (req, res) => {
 
     let images = new Array();
     const file = req.files;
@@ -473,7 +465,7 @@ router.post("/editStudent", auth, multer({ storage: storage }).single("image"), 
             throw new Error("No Identity Found");
         }
 
-        images = identity.images;
+        images = identity.identityImages;
 
         const public_ids = new Array()
 
@@ -485,11 +477,9 @@ router.post("/editStudent", auth, multer({ storage: storage }).single("image"), 
             
             let imagePaths = new Array();
             let imageNames = new Array();
-            let imageTypes = new Array();
             for(let i=0; i< file.length; i++) {
                 imagePaths.push(file[i].path);
                 imageNames.push(file[i].filename.split(".")[0]);
-                imageTypes.push(file[i].filename.split("-")[0]);
             }
         
             const cloudeDirectory = "identities";
@@ -503,17 +493,8 @@ router.post("/editStudent", auth, multer({ storage: storage }).single("image"), 
                 if(upload_res_len > 0) {
                     for(let i=0; i<upload_res_len; i++) {
 
-                        let image_type;
-                        imageTypes.forEach((imageType) => {
-                            if(upload_res[i].original_filename.split("-")[0] == imageType) {
-                                image_type = imageType;
-                                return;
-                            }
-                        });
-
                         const img_data = {
                             image_name: upload_res[i].original_filename + "." + upload_res[i].format,
-                            image_type: image_type,
                             secure_url: upload_res[i].secure_url,
                             public_id: upload_res[i].public_id,
                             created_at: upload_res[i].created_at,
@@ -554,7 +535,7 @@ router.post("/editStudent", auth, multer({ storage: storage }).single("image"), 
             identityImages : images
         };
 
-        await Identity.findByIdAndUpdate(data._id, identityData);
+        await Identity.findByIdAndUpdate(identityData._id, identityData);
         
         res.status(200).send({success : true});
 

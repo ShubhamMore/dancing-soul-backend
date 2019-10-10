@@ -11,10 +11,6 @@ var identitySchema = mongoose.Schema({
                 type : String,
                 required : true
             },
-            identity_type: {
-                type : String,
-                required : true
-            },
             secure_url : {
                 type : String,
                 required : true
