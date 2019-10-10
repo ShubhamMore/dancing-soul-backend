@@ -88,7 +88,7 @@ router.post("/getIdentity", auth, async (req, res) => {
     }
 });
 
-router.post("/editIdentity", auth, multer({ storage: storage }).array("image"), async (req, res) => {
+router.post("/updateIdentity", auth, multer({ storage: storage }).array("image"), async (req, res) => {
 
     let images = new Array();
     const file = req.files;
