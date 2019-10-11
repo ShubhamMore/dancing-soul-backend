@@ -15,9 +15,12 @@ const path = require("path")
 
 const router = new express.Router()
 
-const writeImagesToFile = async() => {
+const writeImagesToFile = async(category) => {
+    console.log(category)
+
+    const categoryType = new RegExp(".*" + category + ".*");
     
-    const images = await Gallery.find({}, {_id: 0, secure_url: 1, width: 1, height: 1});            
+    const images = await Gallery.find({image_name: categoryType}, {_id: 0, secure_url: 1, width: 1, height: 1});            
             
     const saveImages = new Array();
 
@@ -64,7 +67,18 @@ const writeImagesToFile = async() => {
         saveImages.push(devicePreviews);
     });
 
-    const imagePath = path.join(__dirname, "../../", "images/images.json");
+    let imagePath;
+
+    if(category == "mdp") {
+        imagePath = path.join(__dirname, "../../", "images/mdp.json");
+    } else if(category == "itc") {
+        imagePath = path.join(__dirname, "../../", "images/itc.json");
+    } else if(category == "mdm") {
+        imagePath = path.join(__dirname, "../../", "images/mdm.json");
+    } else {
+        imagePath = path.join(__dirname, "../../", "images/images.json");
+    }
+
     fs.writeFileSync(imagePath, JSON.stringify(saveImages));
 
 }
@@ -106,7 +120,7 @@ router.post('/addImages',  multer({ storage: storage }).array("image"), async (r
                 }
             }
 
-            await writeImagesToFile();
+            await writeImagesToFile(req.body.category);
         
             res.status(200).send({responce, upload_responce})
         } catch (e) {
@@ -146,7 +160,7 @@ router.post('/addImage', auth, multer({ storage: storage }).single("image"), asy
 
         const responce = await gallery.save();
 
-        await writeImagesToFile();
+        await writeImagesToFile(req.body.category);
 
         res.status(200).send({responce, upload_responce})
     } catch (e) {
@@ -156,9 +170,10 @@ router.post('/addImage', auth, multer({ storage: storage }).single("image"), asy
 })
 
 router.post("/getImages", async (req, res) => {
-    
+
     try {
-        const images = await Gallery.find();
+        const categoryType = new RegExp(".*" + req.body.category + ".*");
+        const images = await Gallery.find({image_name: categoryType});
         res.status(200).send(images)
     } catch (e) {
         const err = "Something bad happen, " + e;
@@ -182,12 +197,18 @@ router.post("/getAllImages", async (req, res) => {
 router.post("/removeImage", auth, async (req, res) => {
 
     const public_id = req.body.public_id;
-    try {  
-        await Gallery.findOneAndRemove({public_id});
+    try {
+        const image = await Gallery.findOneAndRemove({public_id});
+
+        if(!image) {
+            throw new Error("No Image Found");
+        }
+
+        const category = image.image_name.split("-")[0].substr(0, 3);
         
         const responce = await cloudinaryRemoveImage(public_id);
 
-        await writeImagesToFile();
+        await writeImagesToFile(category);
 
         res.status(200).send(responce)
     } catch (e) {
