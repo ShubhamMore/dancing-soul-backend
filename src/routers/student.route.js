@@ -344,7 +344,6 @@ router.post("/deleteStudent", auth, async (req, res)=>{
     
     try {
         // Authenticate user with password
-        console.log("received")
         let user = await User.findByCredentials(req.user.email, req.body.password)
         if(!user) {
             throw new Error("Wrong Password, Please enter correct password");

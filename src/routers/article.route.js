@@ -203,7 +203,6 @@ router.post("/deleteArticle", auth, async(req,res)=>{
 });
 
 router.post("/deleteArticleImage", auth, async(req,res)=>{
-    console.log(req.body)
     const public_id = req.body.public_id;
     try {
 
@@ -216,7 +215,6 @@ router.post("/deleteArticleImage", auth, async(req,res)=>{
 
         if(responce.result == 'ok') {
             article.image = noImage;
-            console.log(article)
             await article.save();
         }
 

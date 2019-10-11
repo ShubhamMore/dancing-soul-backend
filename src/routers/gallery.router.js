@@ -16,7 +16,6 @@ const path = require("path")
 const router = new express.Router()
 
 const writeImagesToFile = async(category) => {
-    console.log(category)
 
     const categoryType = new RegExp(".*" + category + ".*");
     
@@ -78,7 +77,10 @@ const writeImagesToFile = async(category) => {
     } else {
         imagePath = path.join(__dirname, "../../", "images/images.json");
     }
+    fs.writeFileSync(imagePath, JSON.stringify(saveImages));
 
+    // It Will Be Deleted After User side work is done
+    imagePath = path.join(__dirname, "../../", "images/images.json");
     fs.writeFileSync(imagePath, JSON.stringify(saveImages));
 
 }

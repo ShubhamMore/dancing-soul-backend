@@ -66,8 +66,6 @@ router.post('/addIdentity', auth, multer({ storage: storage }).array("image"), a
 
         const identity = new Identity(identityData)
 
-        console.log(identity)
-
         await identity.save()
         
         res.status(200).send({success : true})

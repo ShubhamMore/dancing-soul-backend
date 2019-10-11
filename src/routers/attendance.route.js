@@ -28,7 +28,7 @@ router.post("/getStudentsForAttendance", auth, async (req, res) => {
 router.post("/saveAttendance", auth, async (req, res)=>{
     try {
         let attendance = await Attendance.findOne({branch: req.body.branch, batch: req.body.batch, batchType: req.body.batchType, date: req.body.date})
-        console.log(attendance)
+
         if(attendance) {
             throw new Error("Attendance alredy added for date" + req.body.date);
         }
@@ -37,7 +37,6 @@ router.post("/saveAttendance", auth, async (req, res)=>{
         await attendance.save()
         res.status(200).send({success : true})
     } catch (e) {
-        console.log(e)
         const err = "Something bad happen, " + e;
         res.status(400).send(err.replace('Error: ', ''));
     }   
