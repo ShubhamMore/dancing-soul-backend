@@ -1,10 +1,10 @@
 const image = {
-    "created_at": "2019-09-29T09:48:58Z",
-    "image_name": "1569750534239.png",
-    "secure_url": "https://res.cloudinary.com/shubhamore/image/upload/v1569750538/shared/1569750534239.png",
-    "public_id": "shared/1569750534239",
-    "width": "300",
-    "height": "300"
+    created_at: "2019-10-11T16:54:43Z",
+    image_name: "shared1-1570812880854.jpg",
+    public_id: "shared/shared1-1570812880854",
+    secure_url: "https://res.cloudinary.com/shubhamore/image/upload/v1570812883/shared/shared1-1570812880854.jpg",
+    height: "300",
+    width: "300"
 }
 
 module.exports = image
