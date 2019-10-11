@@ -79,7 +79,6 @@ router.post('/addIdentity', auth, multer({ storage: storage }).array("image"), a
 
 router.post("/getIdentity", auth, async (req, res) => {
     try {
-        console.log(req.body)
         const identity = await Identity.findOne({student: req.body.student});
         res.status(200).send(identity);
     } catch (e) {

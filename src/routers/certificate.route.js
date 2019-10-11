@@ -21,7 +21,7 @@ router.post('/saveCertificate', auth, multer({ storage: storage }).single("image
         let images = new Array();
         let certificate;
         if(req.body._id) {
-            certificate = await Certificate.find(req.body._id);
+            certificate = await Certificate.findById(req.body._id);
             if(certificate) {
                 images = certificate.certificateImages
             }
@@ -91,7 +91,7 @@ router.post("/getCertificates", auth, async (req, res) => {
     }
 });
 
-router.post("/removeCitrtificate", auth, async (req, res) => {
+router.post("/removeCertificate", auth, async (req, res) => {
 
     try {
 
@@ -103,9 +103,9 @@ router.post("/removeCitrtificate", auth, async (req, res) => {
 
         images = certificate.certificateImages;
         
-        const res = await cloudinaryRemoveImage(req.body.public_id);
+        const responce = await cloudinaryRemoveImage(req.body.public_id);
 
-        if(res.result == 'ok') {
+        if(responce.result == 'ok') {
             const index = findIndexByKey(images, "public_id", req.body.public_id);
             if(index !== null) {
                 images.splice(index, 1);
@@ -113,8 +113,8 @@ router.post("/removeCitrtificate", auth, async (req, res) => {
         }
         
         const certificateData = {
-            _id : req.body._id,
-            student: req.body.student,
+            _id : certificate._id,
+            student: certificate.student,
             certificateImages : images
         };
 
