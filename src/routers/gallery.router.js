@@ -71,7 +71,7 @@ const writeImagesToFile = async(category) => {
     let x = "https://dancing-soul-backend.herokuapp.com/";
 
     if(category == "mdp") {
-        imagePath = "https://dancing-soul-backend.herokuapp.com/images/mdp.json";
+        imagePath = path.join(__dirname, "../../", "images/mdp.json");
     } else if(category == "itc") {
         imagePath = path.join(__dirname, "../../", "images/itc.json");
     } else if(category == "mdm") {
@@ -79,11 +79,7 @@ const writeImagesToFile = async(category) => {
     } else {
         imagePath = path.join(__dirname, "../../", "images/images.json");
     }
-    fs.readFileSync(imagePath, (err, data) => {
-        console.log(err, data)
-    });
-    console.log(imagePath, JSON.stringify(saveImages))
-    fs.writeFileSync(imagePath, JSON.stringify(saveImages), (err) => {                  
+    fs.writeFile(imagePath, JSON.stringify(saveImages), (err) => {                  
         if (err) {
             console.log(err);
         }                           
