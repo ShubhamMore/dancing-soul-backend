@@ -188,8 +188,54 @@ router.post("/getAllImages", async (req, res) => {
     try {
         
         const images = await Gallery.find({}, {_id: 0, secure_url: 1, width: 1, height: 1});
+        // const images = await Gallery.find({image_name: categoryType}, {_id: 0, secure_url: 1, width: 1, height: 1})   
 
-        res.status(200).send(images)
+        const saveImages = new Array();
+
+        images.forEach((curImage) => {
+            const devicePreviews = {
+        };
+                
+        devicePreviews.preview_xxs = {
+            path: curImage.secure_url,
+            width: curImage.width,
+            height: curImage.height
+        }
+        devicePreviews.preview_xs = {
+            path: curImage.secure_url,
+            width: curImage.width,
+            height: curImage.height
+        }
+        devicePreviews.preview_s = {
+            path: curImage.secure_url,
+            width: curImage.width,
+            height: curImage.height
+        }
+        devicePreviews.preview_m = {
+            path: curImage.secure_url,
+            width: curImage.width,
+            height: curImage.height
+        }
+        devicePreviews.preview_l = {
+            path: curImage.secure_url,
+            width: curImage.width,
+            height: curImage.height
+        }
+        devicePreviews.preview_xl = {
+            path: curImage.secure_url,
+            width: curImage.width,
+            height: curImage.height
+        }
+        devicePreviews.raw = {
+            path: curImage.secure_url,
+            width: curImage.width,
+            height: curImage.height
+        }
+
+        saveImages.push(devicePreviews);
+    });
+    const img = JSON.stringify(saveImages);
+    res.status(200).send({images: img})
     } catch (e) {
         const err = "Something bad happen, " + e;
         res.status(400).send(err.replace('Error: ', ''));
