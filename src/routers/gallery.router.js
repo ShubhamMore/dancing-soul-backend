@@ -78,11 +78,7 @@ const writeImagesToFile = async(category) => {
         imagePath = path.join(__dirname, "../../", "images/images.json");
     }
     fs.writeFileSync(imagePath, JSON.stringify(saveImages));
-
-    // It Will Be Deleted After User side work is done
-    imagePath = path.join(__dirname, "../../", "images/images.json");
-    fs.writeFileSync(imagePath, JSON.stringify(saveImages));
-
+    return;
 }
 
 router.post('/addImages',  multer({ storage: storage }).array("image"), async (req, res) => {
