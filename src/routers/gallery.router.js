@@ -68,8 +68,6 @@ const writeImagesToFile = async(category) => {
 
     let imagePath;
 
-    let x = "https://dancing-soul-backend.herokuapp.com/";
-
     if(category == "mdp") {
         imagePath = path.join(__dirname, "../../", "images/mdp.json");
     } else if(category == "itc") {
@@ -79,12 +77,12 @@ const writeImagesToFile = async(category) => {
     } else {
         imagePath = path.join(__dirname, "../../", "images/images.json");
     }
-    fs.writeFileSync(imagePath, JSON.stringify(saveImages), (err) => {                  
-        if (err) {
-            console.log(err);
-        }                           
-    });
-    return;
+    fs.writeFileSync(imagePath, JSON.stringify(saveImages));
+
+    // It Will Be Deleted After User side work is done
+    imagePath = path.join(__dirname, "../../", "images/images.json");
+    fs.writeFileSync(imagePath, JSON.stringify(saveImages));
+
 }
 
 router.post('/addImages',  multer({ storage: storage }).array("image"), async (req, res) => {
