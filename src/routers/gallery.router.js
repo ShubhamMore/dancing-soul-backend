@@ -79,11 +79,11 @@ const writeImagesToFile = async(category) => {
     } else {
         imagePath = path.join(__dirname, "../../", "images/images.json");
     }
-    fs.writeFile(imagePath, JSON.stringify(saveImages), (err) => {                  
+    fs.writeFileSync(imagePath, JSON.stringify(saveImages), (err) => {                  
         if (err) {
             console.log(err);
         }                           
-       });
+    });
     return;
 }
 
