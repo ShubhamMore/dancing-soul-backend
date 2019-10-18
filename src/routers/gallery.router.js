@@ -77,6 +77,7 @@ const writeImagesToFile = async(category) => {
     } else {
         imagePath = path.join(__dirname, "../../", "images/images.json");
     }
+    console.log(imagePath, JSON.stringify(saveImages))
     fs.writeFileSync(imagePath, JSON.stringify(saveImages), (err) => {                  
         if (err) {
             console.log(err);
