@@ -68,8 +68,10 @@ const writeImagesToFile = async(category) => {
 
     let imagePath;
 
+    let x = "https://dancing-soul-backend.herokuapp.com/";
+
     if(category == "mdp") {
-        imagePath = path.join(__dirname, "../../", "images/mdp.json");
+        imagePath = "https://dancing-soul-backend.herokuapp.com/images/mdp.json";
     } else if(category == "itc") {
         imagePath = path.join(__dirname, "../../", "images/itc.json");
     } else if(category == "mdm") {
