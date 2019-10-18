@@ -71,7 +71,8 @@ const writeImagesToFile = async(category) => {
     let x = "https://dancing-soul-backend.herokuapp.com/";
 
     if(category == "mdp") {
-        imagePath = path.join(__dirname, "../../", "images/mdp.json");
+        imagePath = "https://github.com/ShubhamMore/dancing-soul-backend/blob/master/images/mdp.json";
+        // imagePath = path.join(__dirname, "../../", "images/mdp.json");
     } else if(category == "itc") {
         imagePath = path.join(__dirname, "../../", "images/itc.json");
     } else if(category == "mdm") {
