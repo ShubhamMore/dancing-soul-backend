@@ -198,7 +198,7 @@ router.post("/getAllImages", async (req, res) => {
             image.mdp = true;
             const mdpPath = path.join(__dirname, "../../", "images/mdp.json");
             const mdpData = JSON.parse(fs.readFileSync(mdpPath));
-            if(mdpData.length < 1) {
+            if(mdpData.length != mdp.length) {
                 await writeImagesToFile("mdp");
             }
         }
@@ -209,7 +209,7 @@ router.post("/getAllImages", async (req, res) => {
             image.itc = true;
             const itcPath = path.join(__dirname, "../../", "images/itc.json");
             const itcData = JSON.parse(fs.readFileSync(itcPath));
-            if(itcData.length < 1) {
+            if(itcData.length != itc.length) {
                 await writeImagesToFile("itc");
             }
         }
@@ -220,7 +220,7 @@ router.post("/getAllImages", async (req, res) => {
             image.mdm = true;
             const mdmPath = path.join(__dirname, "../../", "images/mdm.json");
             const mdmData = JSON.parse(fs.readFileSync(mdmPath));
-            if(mdmData.length < 1) {
+            if(mdmData.length != mdm.length) {
                 await writeImagesToFile("mdm");
             }
         }
