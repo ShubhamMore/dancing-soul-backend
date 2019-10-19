@@ -186,15 +186,51 @@ router.post("/getImages", async (req, res) => {
 router.post("/getAllImages", async (req, res) => {
     
     try {
-        
-        const images = await Gallery.find({}, {_id: 0, secure_url: 1, width: 1, height: 1});
+        const image = {
+            mdp: false,
+            itc: false,
+            mdm: false
+        }
 
-        res.status(200).send(images)
+        const mdpType = new RegExp(".*mdp.*");
+        const mdp = await Gallery.find({image_name: mdpType}, {_id: 0, secure_url: 1, width: 1, height: 1});
+        if(mdp.length > 0) {
+            image.mdp = true;
+            const mdpPath = path.join(__dirname, "../../", "images/mdp.json");
+            const mdpData = JSON.parse(fs.readFileSync(mdpPath));
+            if(mdpData.length < 1) {
+                await writeImagesToFile("mdp");
+            }
+        }
+
+        const itcType = new RegExp(".*itc.*");
+        const itc = await Gallery.find({image_name: itcType}, {_id: 0, secure_url: 1, width: 1, height: 1});
+        if(itc.length > 0) {
+            image.itc = true;
+            const itcPath = path.join(__dirname, "../../", "images/itc.json");
+            const itcData = JSON.parse(fs.readFileSync(itcPath));
+            if(itcData.length < 1) {
+                await writeImagesToFile("itc");
+            }
+        }
+
+        const mdmType = new RegExp(".*mdm.*");
+        const mdm = await Gallery.find({image_name: mdmType}, {_id: 0, secure_url: 1, width: 1, height: 1});
+        if(mdm.length > 0) {
+            image.mdm = true;
+            const mdmPath = path.join(__dirname, "../../", "images/mdm.json");
+            const mdmData = JSON.parse(fs.readFileSync(mdmPath));
+            if(mdmData.length < 1) {
+                await writeImagesToFile("mdm");
+            }
+        }
+
+        res.status(200).send(image)
     } catch (e) {
         const err = "Something bad happen, " + e;
         res.status(400).send(err.replace('Error: ', ''));
     }
-})
+});
 
 router.post("/removeImage", auth, async (req, res) => {
 
