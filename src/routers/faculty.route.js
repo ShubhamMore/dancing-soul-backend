@@ -94,7 +94,7 @@ router.post("/addFaculty", auth, multer({ storage: storage }).single("image"), a
     } catch (e) {
         let err = "Something bad happend, ";
         if(e.code == 11000) {
-            err = "User alredy register, ";
+            err = "User alredy register";
         }
         err = err + e;
         res.status(400).send(err.replace('Error: ', ''));        
