@@ -1,32 +1,32 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const receiptSchema = new mongoose.Schema({
-    student : {
-        type : String,
-        required : true
-    },
-    amount : {
-        type : String,
-        required : true
-    },
-    feeDescription : {
-        type : String,
-        required : true
-    },
-    receiptDate : {
-        type : String,
-        required : true
-    },
-    paymentMode : {
-        type : String,
-        required : true
-    },
-    feeType : {
-        type : String,
-        default: '0'
-    }
-})
+  student: {
+    type: String,
+    required: true
+  },
+  amount: {
+    type: String,
+    required: true
+  },
+  feeDescription: {
+    type: String,
+    required: true
+  },
+  receiptDate: {
+    type: String,
+    required: true
+  },
+  paymentMode: {
+    type: String,
+    required: true
+  },
+  feeType: {
+    type: String,
+    default: '0'
+  }
+});
 
-const Receipt = mongoose.model('Receipt', receiptSchema)
+const Receipt = mongoose.model('Receipt', receiptSchema);
 
-module.exports = Receipt
+module.exports = Receipt;
