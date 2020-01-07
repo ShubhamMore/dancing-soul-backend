@@ -28,9 +28,9 @@
     "nodemon": "^1.19.4"
   },
   "scripts": {
-    "start": "env-cmd -f ./config/dev.env node src/index.js",
+    "start": "env-cmd -f ./config/dev.env node thedancingsoul.js",
     "dev": "env-cmd -f ./config/dev.env nodemon thedancingsoul.js",
-    "startForever": "env-cmd -f ./config/prod.env pm2 thedancingsoul.js"
+    "startForever": "env-cmd -f ./config/prod.env pm2 start thedancingsoul.js"
   },
   "author": "",
   "license": "ISC",
