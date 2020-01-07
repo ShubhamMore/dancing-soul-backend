@@ -3,10 +3,8 @@ const express = require('express');
 
 const auth = require('../middleware/auth');
 
-const storage = require('../image-upload/multerConfig');
-
-const cloudinaryRemoveImage = require('../image-upload/cloudinaryRemoveImage');
-const cloudinaryUploadImages = require('../image-upload/cloudinaryUploadImages');
+const awsRemoveFile = require('../uploads/awsRemoveFile');
+const awsUploadFiles = require('../uploads/awsUploadFiles');
 
 const Student = require('../model/student.model');
 const Receipt = require('../model/receipt.model');
@@ -17,6 +15,31 @@ const no_image = require('../shared/no_image.image');
 const user_image = require('../shared/user.image');
 
 const findIndexByKey = require('../shared/findIndex');
+
+const MIME_TYPE_MAP = {
+  'image/png': 'png',
+  'image/jpeg': 'jpg',
+  'image/jpg': 'jpg'
+};
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const isValid = MIME_TYPE_MAP[file.mimetype];
+    let error = new Error('Invalid mime type');
+    if (isValid) {
+      error = null;
+    }
+    cb(error, 'fileToUpload');
+  },
+  filename: (req, file, cb) => {
+    const name = file.originalname
+      .toLowerCase()
+      .split(' ')
+      .join('-');
+    const ext = MIME_TYPE_MAP[file.mimetype];
+    cb(null, name + '-' + Date.now() + '.' + ext);
+  }
+});
 
 const router = new express.Router();
 
@@ -33,13 +56,13 @@ router.post(
         let imageNames = new Array();
         for (let i = 0; i < file.length; i++) {
           imagePaths.push(file[i].path);
-          imageNames.push(file[i].filename.split('.')[0]);
+          imageNames.push(file[i].filename);
         }
 
         const cloudeDirectory = 'branches';
 
         try {
-          const upload_responce = await cloudinaryUploadImages(
+          const upload_responce = await awsUploadFiles(
             imagePaths,
             imageNames,
             cloudeDirectory
@@ -51,13 +74,12 @@ router.post(
           if (upload_res_len > 0) {
             for (let i = 0; i < upload_res_len; i++) {
               const img_data = {
-                image_name:
-                  upload_res[i].original_filename + '.' + upload_res[i].format,
-                secure_url: upload_res[i].secure_url,
-                public_id: upload_res[i].public_id,
-                created_at: upload_res[i].created_at,
-                width: upload_res[i].width,
-                height: upload_res[i].height
+                image_name: upload_res[i].key.split('/')[1],
+                secure_url: upload_res[i].Location,
+                public_id: upload_res[i].key,
+                created_at: Date.now(),
+                width: upload_res[i].size.width,
+                height: upload_res[i].size.height
               };
               images.push(img_data);
             }
@@ -156,13 +178,13 @@ router.post(
         let imageNames = new Array();
         for (let i = 0; i < file.length; i++) {
           imagePaths.push(file[i].path);
-          imageNames.push(file[i].filename.split('.')[0]);
+          imageNames.push(file[i].filename);
         }
 
         const cloudeDirectory = 'branches';
 
         try {
-          const upload_responce = await cloudinaryUploadImages(
+          const upload_responce = await awsUploadFiles(
             imagePaths,
             imageNames,
             cloudeDirectory
@@ -174,13 +196,12 @@ router.post(
           if (upload_res_len > 0) {
             for (let i = 0; i < upload_res_len; i++) {
               const img_data = {
-                image_name:
-                  upload_res[i].original_filename + '.' + upload_res[i].format,
-                secure_url: upload_res[i].secure_url,
-                public_id: upload_res[i].public_id,
-                created_at: upload_res[i].created_at,
-                width: upload_res[i].width,
-                height: upload_res[i].height
+                image_name: upload_res[i].key.split('/')[1],
+                secure_url: upload_res[i].Location,
+                public_id: upload_res[i].key,
+                created_at: Date.now(),
+                width: upload_res[i].size.width,
+                height: upload_res[i].size.height
               };
               images.push(img_data);
             }
@@ -246,13 +267,11 @@ router.post('/deleteBranchImage', auth, async (req, res) => {
     }
     const images = branch.images;
 
-    const responce = await cloudinaryRemoveImage(public_id);
+    const responce = await awsRemoveFile(public_id);
 
-    if (responce.result == 'ok') {
-      const index = findIndexByKey(images, 'public_id', public_id);
-      if (index !== null) {
-        images.splice(index, 1);
-      }
+    const index = findIndexByKey(images, 'public_id', public_id);
+    if (index !== null) {
+      images.splice(index, 1);
     }
 
     if (images.length === 0) {
@@ -292,7 +311,7 @@ router.post('/deleteBranch', auth, async (req, res) => {
 
     for (let i = 0; i < stu_len; i++) {
       if (students[i].image.public_id !== user_image.public_id) {
-        await addresscloudinaryRemoveImage(students[i].image.public_id);
+        await awsRemoveFile(students[i].image.public_id);
       }
 
       await Receipt.deleteMany({ student: students[i]._id });
@@ -307,7 +326,7 @@ router.post('/deleteBranch', auth, async (req, res) => {
     const index = findIndexByKey(images, 'public_id', no_image.public_id);
     if (index !== null) {
       for (let i = 0; i < images.length; i++) {
-        await cloudinaryRemoveImage(images[i].public_id);
+        await awsRemoveFile(images[i].public_id);
       }
     }
 

@@ -3,10 +3,8 @@ const express = require('express');
 
 const auth = require('../middleware/auth');
 
-const storage = require('../image-upload/multerConfig');
-
-const cloudinaryRemoveImage = require('../image-upload/cloudinaryRemoveImage');
-const cloudinaryUploadImage = require('../image-upload/cloudinaryUploadImage');
+const awsRemoveFile = require('../uploads/awsRemoveFile');
+const awsUploadFile = require('../uploads/awsUploadFile');
 
 const Student = require('../model/student.model');
 const Branch = require('../model/branch.model');
@@ -16,6 +14,31 @@ const User = require('../model/user.model');
 const user_image = require('../shared/user.image');
 
 const sendMail = require('../mail/mail');
+
+const MIME_TYPE_MAP = {
+  'image/png': 'png',
+  'image/jpeg': 'jpg',
+  'image/jpg': 'jpg'
+};
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const isValid = MIME_TYPE_MAP[file.mimetype];
+    let error = new Error('Invalid mime type');
+    if (isValid) {
+      error = null;
+    }
+    cb(error, 'fileToUpload');
+  },
+  filename: (req, file, cb) => {
+    const name = file.originalname
+      .toLowerCase()
+      .split(' ')
+      .join('-');
+    const ext = MIME_TYPE_MAP[file.mimetype];
+    cb(null, name + '-' + Date.now() + '.' + ext);
+  }
+});
 
 const router = new express.Router();
 
@@ -40,12 +63,12 @@ router.post(
 
       if (file !== undefined) {
         let imagePath = file.path;
-        let imageName = file.filename.split('.')[0];
+        let imageName = file.filename.split;
 
         const cloudeDirectory = 'students';
 
         try {
-          const upload_responce = await cloudinaryUploadImage(
+          const upload_responce = await awsUploadFile(
             imagePath,
             imageName,
             cloudeDirectory
@@ -55,13 +78,12 @@ router.post(
 
           if (upload_res) {
             const img_data = {
-              image_name:
-                upload_res.original_filename + '.' + upload_res.format,
-              secure_url: upload_res.secure_url,
-              public_id: upload_res.public_id,
-              created_at: upload_res.created_at,
-              width: upload_res.width,
-              height: upload_res.height
+              image_name: upload_res.key.split('/')[1],
+              secure_url: upload_res.Location,
+              public_id: upload_res.key,
+              created_at: Date.now(),
+              width: upload_res.size.width,
+              height: upload_res.size.height
             };
             image = img_data;
           }
@@ -257,7 +279,7 @@ router.post(
         const cloudeDirectory = 'faculties';
 
         try {
-          const upload_responce = await cloudinaryUploadImage(
+          const upload_responce = await awsUploadFile(
             imagePath,
             imageName,
             cloudeDirectory
@@ -267,19 +289,18 @@ router.post(
 
           if (upload_res) {
             const img_data = {
-              image_name:
-                upload_res.original_filename + '.' + upload_res.format,
-              secure_url: upload_res.secure_url,
-              public_id: upload_res.public_id,
-              created_at: upload_res.created_at,
-              width: upload_res.width,
-              height: upload_res.height
+              image_name: upload_res.key.split('/')[1],
+              secure_url: upload_res.Location,
+              public_id: upload_res.key,
+              created_at: Date.now(),
+              width: upload_res.size.width,
+              height: upload_res.size.height
             };
             image = img_data;
           }
 
           if (img_pub_id !== user_image.public_id) {
-            await cloudinaryRemoveImage(img_pub_id);
+            await awsRemoveFile(img_pub_id);
           }
         } catch (e) {}
       }
@@ -384,7 +405,7 @@ router.post('/deleteStudent', auth, async (req, res) => {
     }
     // Delete Cloude Image
     if (student.image.public_id !== user_image.public_id) {
-      await cloudinaryRemoveImage(student.image.public_id);
+      await awsRemoveFile(student.image.public_id);
     }
     // Delete Student
     await Student.findByIdAndRemove(student._id);

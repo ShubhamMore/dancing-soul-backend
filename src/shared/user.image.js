@@ -1,9 +1,9 @@
 const image = {
-  created_at: '2019-10-11T16:54:43Z',
-  image_name: 'shared1-1570812880854.jpg',
-  public_id: 'shared/shared1-1570812880854',
+  created_at: '2020-01-07T16:54:42Z',
+  image_name: 'no_user.jpg',
+  public_id: 'shared/no_user.jpg',
   secure_url:
-    'https://res.cloudinary.com/shubhamore/image/upload/v1570812883/shared/shared1-1570812880854.jpg',
+    'https://thedancingsoul.s3.ap-south-1.amazonaws.com/shared/no_user.jpg',
   height: '300',
   width: '300'
 };
