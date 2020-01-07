@@ -29,7 +29,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "env-cmd -f ./config/dev.env nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "startForever": "env-cmd -f ./config/prod.env pm2 index.js"
   },
   "author": "",
   "license": "ISC",
