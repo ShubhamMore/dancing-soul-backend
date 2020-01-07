@@ -1,6 +1,10 @@
 var mongoose = require('mongoose');
 
 var gallerySchema = mongoose.Schema({
+  category: {
+    type: String,
+    required: true
+  },
   image_name: {
     type: String,
     required: true

@@ -15,12 +15,10 @@ const branchSchema = new mongoose.Schema({
     required: true
   },
   email: {
-    type: String,
-    required: true
+    type: String
   },
   phone: {
-    type: String,
-    required: true
+    type: String
   },
   description: {
     type: String,

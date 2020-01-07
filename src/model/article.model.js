@@ -6,33 +6,26 @@ const articleSchema = new mongoose.Schema({
     required: true
   },
   body: {
-    type: String,
-    required: true
+    type: String
   },
-  image: {
-    image_name: {
-      type: String,
-      required: true
+  file: {
+    file_name: {
+      type: String
     },
     secure_url: {
-      type: String,
-      required: true
+      type: String
     },
     public_id: {
-      type: String,
-      required: true
+      type: String
     },
     created_at: {
-      type: String,
-      default: Date.now.toString()
+      type: String
     },
     width: {
-      type: String,
-      required: true
+      type: String
     },
     height: {
-      type: String,
-      required: true
+      type: String
     }
   }
 });

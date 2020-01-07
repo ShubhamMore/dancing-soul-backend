@@ -1,25 +1,47 @@
 const multer = require('multer');
 const express = require('express');
 
+const fs = require('fs').promises;
+const path = require('path');
+
 const auth = require('../middleware/auth');
 const Gallery = require('../model/gallery.model');
 const Video = require('../model/video.model');
 
-const storage = require('../image-upload/multerConfig');
-const cloudinaryUploadImage = require('../image-upload/cloudinaryUploadImage');
-const cloudinaryUploadImages = require('../image-upload/cloudinaryUploadImages');
-const cloudinaryRemoveImage = require('../image-upload/cloudinaryRemoveImage');
+const awsUploadFiles = require('../uploads/awsUploadFiles');
+const awsUploadFile = require('../uploads/awsUploadFile');
+const awsRemoveFile = require('../uploads/awsRemoveFile');
 
-const fs = require('fs');
-const path = require('path');
+const MIME_TYPE_MAP = {
+  'image/png': 'png',
+  'image/jpeg': 'jpg',
+  'image/jpg': 'jpg'
+};
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const isValid = MIME_TYPE_MAP[file.mimetype];
+    let error = new Error('Invalid mime type');
+    if (isValid) {
+      error = null;
+    }
+    cb(error, 'fileToUpload');
+  },
+  filename: (req, file, cb) => {
+    const name = file.originalname
+      .toLowerCase()
+      .split(' ')
+      .join('-');
+    const ext = MIME_TYPE_MAP[file.mimetype];
+    cb(null, name + '-' + Date.now() + '.' + ext);
+  }
+});
 
 const router = new express.Router();
 
 const writeImagesToFile = async category => {
-  const categoryType = new RegExp('.*' + category + '.*');
-
   const images = await Gallery.find(
-    { image_name: categoryType },
+    { category },
     { _id: 0, secure_url: 1, width: 1, height: 1 }
   );
 
@@ -78,11 +100,11 @@ const writeImagesToFile = async category => {
   } else {
     imagePath = path.join(__dirname, '../../', 'images/images.json');
   }
-  fs.writeFileSync(imagePath, JSON.stringify(saveImages));
+  await fs.writeFile(imagePath, JSON.stringify(saveImages));
 
   // It Will Be Deleted After User side work is done
   imagePath = path.join(__dirname, '../../', 'images/images.json');
-  fs.writeFileSync(imagePath, JSON.stringify(saveImages));
+  await fs.writeFile(imagePath, JSON.stringify(saveImages));
 };
 
 router.post(
@@ -95,13 +117,12 @@ router.post(
       let imageNames = new Array();
       for (let i = 0; i < file.length; i++) {
         imagePaths.push(file[i].path);
-        imageNames.push(file[i].filename.split('.')[0]);
+        imageNames.push(file[i].filename);
       }
 
       const cloudeDirectory = 'gallery';
-
       try {
-        const upload_responce = await cloudinaryUploadImages(
+        const upload_responce = await awsUploadFiles(
           imagePaths,
           imageNames,
           cloudeDirectory
@@ -115,13 +136,13 @@ router.post(
         if (upload_res_len > 0) {
           for (let i = 0; i < upload_res_len; i++) {
             const img_data = {
-              image_name:
-                upload_res[i].original_filename + '.' + upload_res[i].format,
-              secure_url: upload_res[i].secure_url,
-              public_id: upload_res[i].public_id,
-              created_at: upload_res[i].created_at,
-              width: upload_res[i].width,
-              height: upload_res[i].height
+              category: req.body.category,
+              image_name: upload_res[i].key.split('/')[1],
+              secure_url: upload_res[i].Location,
+              public_id: upload_res[i].key,
+              created_at: Date.now(),
+              width: upload_res[i].size.width,
+              height: upload_res[i].size.height
             };
             const gallery = new Gallery(img_data);
             const res = await gallery.save();
@@ -149,12 +170,12 @@ router.post(
   async (req, res) => {
     const file = req.file;
     let imagePath = file.path;
-    let imageName = file.filename.split('.')[0];
+    let imageName = file.filename;
 
     const cloudeDirectory = 'gallery';
 
     try {
-      const upload_responce = await cloudinaryUploadImage(
+      const upload_responce = await awsUploadFile(
         imagePath,
         imageName,
         cloudeDirectory
@@ -163,12 +184,13 @@ router.post(
       const upload_res = upload_responce.upload_res;
 
       const img_data = {
-        image_name: upload_res.original_filename + '.' + upload_res.format,
-        secure_url: upload_res.secure_url,
-        public_id: upload_res.public_id,
-        created_at: upload_res.created_at,
-        width: upload_res.width,
-        height: upload_res.height
+        category: req.body.category,
+        image_name: upload_res.key.split('/')[1],
+        secure_url: upload_res.Location,
+        public_id: upload_res.key,
+        created_at: Date.now(),
+        width: upload_res.size.width,
+        height: upload_res.size.height
       };
 
       const gallery = new Gallery(img_data);
@@ -187,8 +209,7 @@ router.post(
 
 router.post('/getImages', async (req, res) => {
   try {
-    const categoryType = new RegExp('.*' + req.body.category + '.*');
-    const images = await Gallery.find({ image_name: categoryType });
+    const images = await Gallery.find({ category: req.body.category });
     res.status(200).send(images);
   } catch (e) {
     const err = 'Something bad happen, ' + e;
@@ -204,43 +225,40 @@ router.post('/getAllImages', async (req, res) => {
       mdm: false
     };
 
-    const mdpType = new RegExp('.*mdp.*');
     const mdp = await Gallery.find(
-      { image_name: mdpType },
+      { category: 'mdp' },
       { _id: 0, secure_url: 1, width: 1, height: 1 }
     );
     if (mdp.length > 0) {
       image.mdp = true;
       const mdpPath = path.join(__dirname, '../../', 'images/mdp.json');
-      const mdpData = JSON.parse(fs.readFileSync(mdpPath));
+      const mdpData = JSON.parse(await fs.readFile(mdpPath));
       if (mdpData.length != mdp.length) {
         await writeImagesToFile('mdp');
       }
     }
 
-    const itcType = new RegExp('.*itc.*');
     const itc = await Gallery.find(
-      { image_name: itcType },
+      { category: 'itc' },
       { _id: 0, secure_url: 1, width: 1, height: 1 }
     );
     if (itc.length > 0) {
       image.itc = true;
       const itcPath = path.join(__dirname, '../../', 'images/itc.json');
-      const itcData = JSON.parse(fs.readFileSync(itcPath));
+      const itcData = JSON.parse(await fs.readFile(itcPath));
       if (itcData.length != itc.length) {
         await writeImagesToFile('itc');
       }
     }
 
-    const mdmType = new RegExp('.*mdm.*');
     const mdm = await Gallery.find(
-      { image_name: mdmType },
+      { category: 'mdm' },
       { _id: 0, secure_url: 1, width: 1, height: 1 }
     );
     if (mdm.length > 0) {
       image.mdm = true;
       const mdmPath = path.join(__dirname, '../../', 'images/mdm.json');
-      const mdmData = JSON.parse(fs.readFileSync(mdmPath));
+      const mdmData = JSON.parse(await fs.readFile(mdmPath));
       if (mdmData.length != mdm.length) {
         await writeImagesToFile('mdm');
       }
@@ -262,11 +280,9 @@ router.post('/removeImage', auth, async (req, res) => {
       throw new Error('No Image Found');
     }
 
-    const category = image.image_name.split('-')[0].substr(0, 3);
+    const responce = await awsRemoveFile(public_id);
 
-    const responce = await cloudinaryRemoveImage(public_id);
-
-    await writeImagesToFile(category);
+    await writeImagesToFile(image.category);
 
     res.status(200).send(responce);
   } catch (e) {

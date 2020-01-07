@@ -48,7 +48,7 @@ router.post('/login', async (req, res) => {
       email: user.email,
       userType: user.userType,
       token,
-      expiresIn: 1800
+      expiresIn: 3600
     };
     res.send(data);
   } catch (e) {
