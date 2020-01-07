@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const auth = require('../middleware/auth');
+const adminAuth = require('../middleware/admin-auth');
 const Exam = require('../model/exam.model');
 
 const awsUploadFile = require('../uploads/awsUploadFile');
@@ -39,6 +40,7 @@ const router = new express.Router();
 router.post(
   '/addExam',
   auth,
+  adminAuth,
   multer({ storage: storage }).single('image'),
   async (req, res) => {
     const file = req.file;
@@ -125,6 +127,7 @@ router.post('/getExam', async (req, res) => {
 router.post(
   '/editExam',
   auth,
+  adminAuth,
   multer({ storage: storage }).single('image'),
   async (req, res) => {
     const file = req.file;
@@ -189,7 +192,7 @@ router.post(
   }
 );
 
-router.post('/deleteExam', auth, async (req, res) => {
+router.post('/deleteExam', auth, adminAuth, async (req, res) => {
   try {
     const exam = await Exam.findByIdAndDelete(req.body._id);
     if (!exam) {
@@ -205,7 +208,7 @@ router.post('/deleteExam', auth, async (req, res) => {
   }
 });
 
-router.post('/deleteExamFile', auth, async (req, res) => {
+router.post('/deleteExamFile', auth, adminAuth, async (req, res) => {
   const public_id = req.body.public_id;
   try {
     const exam = await Exam.findByIdAndUpdate(req.body._id, {

@@ -1,5 +1,6 @@
 const express = require('express');
 const auth = require('../middleware/auth');
+const adminAuth = require('../middleware/admin-auth');
 
 const Enquiry = require('../model/enquiry.model');
 const Branch = require('../model/branch.model');
@@ -8,7 +9,7 @@ const Student = require('../model/student.model');
 
 const router = new express.Router();
 
-router.post('/getDashboardData', auth, async (req, res) => {
+router.post('/getDashboardData', auth, adminAuth, async (req, res) => {
   try {
     const enquiries = await Enquiry.find({ seen: '0' });
     if (!enquiries) {

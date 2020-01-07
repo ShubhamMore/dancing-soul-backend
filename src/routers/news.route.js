@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const auth = require('../middleware/auth');
+const adminAuth = require('../middleware/admin-auth');
 const News = require('../model/news.model');
 
 const awsUploadFile = require('../uploads/awsUploadFile');
@@ -39,6 +40,7 @@ const router = new express.Router();
 router.post(
   '/addNews',
   auth,
+  adminAuth,
   multer({ storage: storage }).single('image'),
   async (req, res) => {
     const file = req.file;
@@ -125,6 +127,7 @@ router.post('/getNews', async (req, res) => {
 router.post(
   '/editNews',
   auth,
+  adminAuth,
   multer({ storage: storage }).single('image'),
   async (req, res) => {
     const file = req.file;
@@ -188,7 +191,7 @@ router.post(
   }
 );
 
-router.post('/deleteNews', auth, async (req, res) => {
+router.post('/deleteNews', auth, adminAuth, async (req, res) => {
   try {
     const news = await News.findByIdAndDelete(req.body._id);
     if (!news) {
@@ -204,7 +207,7 @@ router.post('/deleteNews', auth, async (req, res) => {
   }
 });
 
-router.post('/deleteNewsFile', auth, async (req, res) => {
+router.post('/deleteNewsFile', auth, adminAuth, async (req, res) => {
   const public_id = req.body.public_id;
   try {
     const news = await News.findByIdAndUpdate(req.body._id, {

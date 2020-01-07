@@ -1,11 +1,12 @@
 const express = require('express');
 const auth = require('../middleware/auth');
+const adminAuth = require('../middleware/admin-auth');
 const Receipt = require('../model/receipt.model');
 const Student = require('../model/student.model');
 const Branch = require('../model/branch.model');
 const router = new express.Router();
 
-router.post('/addReceipt', auth, async (req, res) => {
+router.post('/addReceipt', auth, adminAuth, async (req, res) => {
   const receipt = new Receipt(req.body);
   try {
     await receipt.save();
@@ -61,7 +62,7 @@ router.post('/getReceipt', auth, async (req, res) => {
   }
 });
 
-router.post('/editReceipt', auth, async (req, res) => {
+router.post('/editReceipt', auth, adminAuth, async (req, res) => {
   try {
     const receipt = await Receipt.findByIdAndUpdate(req.body._id, req.data);
     if (!receipt) {
@@ -74,7 +75,7 @@ router.post('/editReceipt', auth, async (req, res) => {
   }
 });
 
-router.post('/deleteReceipt', auth, async (req, res) => {
+router.post('/deleteReceipt', auth, adminAuth, async (req, res) => {
   try {
     const receipt = await Receipt.findByIdAndDelete(req.body._id);
     if (!receipt) {

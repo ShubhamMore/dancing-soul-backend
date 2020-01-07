@@ -5,6 +5,7 @@ const fs = require('fs').promises;
 const path = require('path');
 
 const auth = require('../middleware/auth');
+const adminAuth = require('../middleware/admin-auth');
 const Gallery = require('../model/gallery.model');
 const Video = require('../model/video.model');
 
@@ -109,6 +110,8 @@ const writeImagesToFile = async category => {
 
 router.post(
   '/addImages',
+  auth,
+  adminAuth,
   multer({ storage: storage }).array('image'),
   async (req, res) => {
     const file = req.files;
@@ -166,6 +169,7 @@ router.post(
 router.post(
   '/addImage',
   auth,
+  adminAuth,
   multer({ storage: storage }).single('image'),
   async (req, res) => {
     const file = req.file;
@@ -207,7 +211,7 @@ router.post(
   }
 );
 
-router.post('/getImages', async (req, res) => {
+router.post('/getImages', auth, adminAuth, async (req, res) => {
   try {
     const images = await Gallery.find({ category: req.body.category });
     res.status(200).send(images);
@@ -271,7 +275,7 @@ router.post('/getAllImages', async (req, res) => {
   }
 });
 
-router.post('/removeImage', auth, async (req, res) => {
+router.post('/removeImage', auth, adminAuth, async (req, res) => {
   const public_id = req.body.public_id;
   try {
     const image = await Gallery.findOneAndRemove({ public_id });
@@ -291,7 +295,7 @@ router.post('/removeImage', auth, async (req, res) => {
   }
 });
 
-router.post('/addVideo', auth, async (req, res) => {
+router.post('/addVideo', auth, adminAuth, async (req, res) => {
   try {
     const video = new Video(req.body);
     await video.save();
@@ -327,7 +331,7 @@ router.post('/getVideo', async (req, res) => {
   }
 });
 
-router.post('/removeVideo', auth, async (req, res) => {
+router.post('/removeVideo', auth, adminAuth, async (req, res) => {
   try {
     const video = await Video.findByIdAndRemove(req.body._id);
 

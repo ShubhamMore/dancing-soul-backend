@@ -1,6 +1,3 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/user.model');
-
 const adminAuth = async (req, res, next) => {
   try {
     if (req.user.userType !== 'admin') {

@@ -2,6 +2,7 @@ const multer = require('multer');
 const express = require('express');
 
 const auth = require('../middleware/auth');
+const adminAuth = require('../middleware/admin-auth');
 
 const awsRemoveFile = require('../uploads/awsRemoveFile');
 const awsUploadFile = require('../uploads/awsUploadFile');
@@ -43,6 +44,7 @@ const router = new express.Router();
 router.post(
   '/addFaculty',
   auth,
+  adminAuth,
   multer({ storage: storage }).single('image'),
   async (req, res) => {
     const file = req.file;
@@ -134,7 +136,7 @@ router.post(
   }
 );
 
-router.post('/getFaculties', auth, async (req, res) => {
+router.post('/getFaculties', auth, adminAuth, async (req, res) => {
   try {
     const faculties = await Faculty.find();
     if (!faculties) {
@@ -160,7 +162,7 @@ router.post('/getActivateFaculties', async (req, res) => {
   }
 });
 
-router.post('/getFaculty', auth, async (req, res) => {
+router.post('/getFaculty', auth, adminAuth, async (req, res) => {
   try {
     const faculty = await Faculty.findById(req.body._id);
     if (!faculty) {
@@ -173,7 +175,7 @@ router.post('/getFaculty', auth, async (req, res) => {
   }
 });
 
-router.post('/changeFacultyStatus', auth, async (req, res) => {
+router.post('/changeFacultyStatus', auth, adminAuth, async (req, res) => {
   try {
     const faculty = await Faculty.findByIdAndUpdate(req.body._id, {
       status: req.body.status
@@ -232,6 +234,7 @@ router.post('/changeFacultyStatus', auth, async (req, res) => {
 router.post(
   '/editFaculty',
   auth,
+  adminAuth,
   multer({ storage: storage }).single('image'),
   async (req, res) => {
     const file = req.file;
@@ -310,7 +313,7 @@ router.post(
   }
 );
 
-router.post('/deleteFaculty', auth, async (req, res) => {
+router.post('/deleteFaculty', auth, adminAuth, async (req, res) => {
   try {
     let user = await User.findByCredentials(req.user.email, req.body.password);
     if (!user) {

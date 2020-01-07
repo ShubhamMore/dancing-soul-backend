@@ -2,6 +2,7 @@ const multer = require('multer');
 const express = require('express');
 
 const auth = require('../middleware/auth');
+const adminAuth = require('../middleware/admin-auth');
 
 const awsRemoveFile = require('../uploads/awsRemoveFile');
 const awsUploadFile = require('../uploads/awsUploadFile');
@@ -45,6 +46,7 @@ const router = new express.Router();
 router.post(
   '/addStudent',
   auth,
+  adminAuth,
   multer({ storage: storage }).single('image'),
   async (req, res) => {
     const file = req.file;
@@ -146,7 +148,7 @@ router.post(
   }
 );
 
-router.post('/getStudents', auth, async (req, res) => {
+router.post('/getStudents', auth, adminAuth, async (req, res) => {
   try {
     const students = await Student.find({
       branch: req.body.branch,
@@ -193,7 +195,7 @@ router.post('/getStudent', auth, async (req, res) => {
   }
 });
 
-router.post('/getStudentForReceipt', auth, async (req, res) => {
+router.post('/getStudentForReceipt', auth, adminAuth, async (req, res) => {
   try {
     const student = await Student.findById(req.body._id);
     if (!student) {
@@ -223,7 +225,7 @@ router.post('/getStudentForReceipt', auth, async (req, res) => {
   }
 });
 
-router.post('/getStudentForEditing', auth, async (req, res) => {
+router.post('/getStudentForEditing', auth, adminAuth, async (req, res) => {
   try {
     const student = await Student.findById(req.body._id);
     if (!student) {
@@ -249,6 +251,7 @@ router.post('/getStudentForEditing', auth, async (req, res) => {
 router.post(
   '/editStudent',
   auth,
+  adminAuth,
   multer({ storage: storage }).single('image'),
   async (req, res) => {
     const file = req.file;
@@ -336,7 +339,7 @@ router.post(
   }
 );
 
-router.post('/changeStudentStatus', auth, async (req, res) => {
+router.post('/changeStudentStatus', auth, adminAuth, async (req, res) => {
   try {
     const student = await Student.findByIdAndUpdate(req.body._id, {
       status: req.body.status
@@ -391,7 +394,7 @@ router.post('/changeStudentStatus', auth, async (req, res) => {
   }
 });
 
-router.post('/deleteStudent', auth, async (req, res) => {
+router.post('/deleteStudent', auth, adminAuth, async (req, res) => {
   try {
     // Authenticate user with password
     let user = await User.findByCredentials(req.user.email, req.body.password);
