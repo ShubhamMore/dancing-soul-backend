@@ -29,8 +29,8 @@
   },
   "scripts": {
     "start": "node src/index.js",
-    "dev": "env-cmd -f ./config/dev.env nodemon index.js",
-    "startForever": "env-cmd -f ./config/prod.env pm2 index.js"
+    "dev": "env-cmd -f ./config/dev.env nodemon thedancingsoul.js",
+    "startForever": "env-cmd -f ./config/prod.env pm2 thedancingsoul.js"
   },
   "author": "",
   "license": "ISC",
