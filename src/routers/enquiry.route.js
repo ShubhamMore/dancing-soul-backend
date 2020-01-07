@@ -14,11 +14,13 @@ router.post('/sendEnquiry', async (req, res) => {
       from: enquiry.email,
       to: process.env.ENQUIRY_MAIL,
       subject: `Enquiry from ${enquiry.name}`,
-      text: `Reply to : ${enquiry.email}`,
-      html: `<p>Hello,<br>My name is ${enquiry.name},<br>
-                  my contact is ${enquiry.phone}<br>
-                  and my email address is ${enquiry.email}<br>
-                  and I would like to discuss about ${enquiry.message}.</p>`
+      text: '',
+      html: `
+        <p>Hello,<br>My name is ${enquiry.name},<br>
+        my contact is ${enquiry.phone}<br>
+        and my email address is ${enquiry.email}<br>
+        and I would like to discuss about ${enquiry.message}.</p>
+      `
     };
 
     await sendMail(mail);
@@ -37,7 +39,7 @@ router.post('/replyEnquiry', auth, async (req, res) => {
       from: process.env.ENQUIRY_MAIL,
       to: reply.email,
       subject: reply.subject,
-      text: 'Thanks for Contacting us..',
+      text: '',
       html: `Thanks for Contacting us..,<br>${reply.body}`
     };
 

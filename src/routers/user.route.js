@@ -82,7 +82,8 @@ router.post('/forgotPassword', async (req, res) => {
       from: process.env.ADMIN_MAIL,
       to: user.email,
       subject: 'Reset Password Link for Dancing Soul',
-      text: link
+      text: '',
+      html: `<p>Click following link to reset your password </p><br><a href='${link}'>${link}</a>`
     };
 
     await sendMail(mail);

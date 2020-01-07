@@ -110,14 +110,14 @@ router.post(
         from: process.env.ADMIN_MAIL,
         to: faculty.email,
         subject: 'Welcome to Dancing Soul',
-        text: 'Welcome ' + faculty.name,
-        html:
-          '<b>Welcome</b>' +
-          faculty.name +
-          '<br>User Name : ' +
-          faculty.email +
-          '<br>Password : ' +
-          faculty.phone
+        text: '',
+        html: `
+          <b>Welcomm <em>${faculty.name}</em></b><br>
+          <p>Your Dancing soul Login Credentials are</p>
+          User id : ${faculty.email} <br>
+          Password : ${faculty.phone}<br>
+          <p><a href=''>Click here to Login with Dancing Soul</a></p>
+        `
       };
 
       await sendMail(mail);
@@ -192,11 +192,11 @@ router.post('/changeFacultyStatus', auth, async (req, res) => {
         from: process.env.ADMIN_MAIL,
         to: faculty.email,
         subject: 'Thanks for being part of Dancing Soul',
-        text: 'Thanks ' + faculty.name,
-        html:
-          '<b>Thanks</b> ' +
-          faculty.name +
-          ' You are no longer part of dancing Soul Acadamy, Thanks for Supporting Us..'
+        text: '',
+        html: `
+          <b>Thanks</b> faculty.name <br>
+          You are no longer part of dancing Soul Acadamy, Thanks for Supporting Us..
+        `
       };
       await sendMail(mail);
     } else if (req.body.status === '1') {
@@ -210,14 +210,14 @@ router.post('/changeFacultyStatus', auth, async (req, res) => {
         from: process.env.ADMIN_MAIL,
         to: faculty.email,
         subject: 'Welcome to Dancing Soul',
-        text: 'Welcome Back ' + faculty.name,
-        html:
-          '<b>Welcome back </b>' +
-          faculty.name +
-          '<br>Userid : ' +
-          faculty.email +
-          '<br>Password : ' +
-          faculty.phone
+        text: '',
+        html: `
+          <b>Welcomm Back <em>${faculty.name}</em></b><br>
+          <p>Your Dancing soul Login Credentials are</p>
+          User id : ${faculty.email} <br>
+          Password : ${faculty.phone}<br>
+          <p><a href=''>Click here to Login with Dancing Soul</a></p>
+        `
       };
       await sendMail(mail);
     }

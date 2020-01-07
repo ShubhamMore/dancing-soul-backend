@@ -122,14 +122,14 @@ router.post(
         from: process.env.ADMIN_MAIL,
         to: student.email,
         subject: 'Welcome to Dancing Soul',
-        text: 'Welcome ' + student.name,
-        html:
-          '<b>Welcome</b>' +
-          student.name +
-          '<br>Userid : ' +
-          student.email +
-          '<br>Password : ' +
-          student.phone
+        text: '',
+        html: `
+          <b>Welcomm <em>${student.name}</em></b><br>
+          <p>Your Dancing soul Login Credentials are</p>
+          User id : ${student.email} <br>
+          Password : ${student.phone}<br>
+          <p><a href=''>Click here to Login with Dancing Soul</a></p>
+          `
       };
 
       await sendMail(mail);
@@ -355,11 +355,11 @@ router.post('/changeStudentStatus', auth, async (req, res) => {
         from: process.env.ADMIN_MAIL,
         to: student.email,
         subject: 'Thanks for using Dancing Soul',
-        text: 'Thanks ' + student.name,
-        html:
-          '<b>Thanks</b> ' +
-          student.name +
-          ' You are no longer part of dancing Soul Acadamy, Thanks for Supporting Us..'
+        text: '',
+        html: `
+          <b>Thanks</b> ${student.name} <br>
+          You are no longer part of dancing Soul Acadamy, Thanks for Supporting Us..
+          `
       };
       await sendMail(mail);
     } else if (req.body.status === '1') {
@@ -373,14 +373,14 @@ router.post('/changeStudentStatus', auth, async (req, res) => {
         from: process.env.ADMIN_MAIL,
         to: student.email,
         subject: 'Welcome back ' + student.name + ' to Dancing Soul Acadamy',
-        text: 'Welcome Back ' + student.name,
-        html:
-          '<b>Welcome back </b>' +
-          student.name +
-          '<br>Userid : ' +
-          student.email +
-          '<br>Password : ' +
-          student.phone
+        text: '',
+        html: `
+          <b>Welcomm Back <em>${student.name}</em></b><br>
+          <p>Your Dancing soul Login Credentials are</p>
+          User id : ${student.email} <br>
+          Password : ${student.phone}<br>
+          <p><a href=''>Click here to Login with Dancing Soul</a></p>
+        `
       };
       await sendMail(mail);
     }
