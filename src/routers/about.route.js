@@ -1,9 +1,10 @@
 const express = require('express');
-const auth = require('../middleware/auth');
 const About = require('../model/about.model');
+const auth = require('../middleware/auth');
+const adminAuth = require('../middleware/admin-auth');
 const router = new express.Router();
 
-router.post('/addAbout', auth, async (req, res) => {
+router.post('/addAbout', auth, adminAuth, async (req, res) => {
   const about = new About(req.body);
   try {
     await about.save();
@@ -27,7 +28,7 @@ router.post('/getAbout', async (req, res) => {
   }
 });
 
-router.post('/saveAbout', auth, async (req, res) => {
+router.post('/saveAbout', auth, adminAuth, async (req, res) => {
   try {
     const about = await About.findByIdAndUpdate(req.body._id, req.body);
     if (!about) {

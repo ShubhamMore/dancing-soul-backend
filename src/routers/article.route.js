@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 
 const auth = require('../middleware/auth');
+const adminAuth = require('../middleware/admin-auth');
 const Article = require('../model/article.model');
 
 const awsUploadFile = require('../uploads/awsUploadFile');
@@ -40,6 +41,7 @@ const router = new express.Router();
 router.post(
   '/addArticle',
   auth,
+  adminAuth,
   multer({ storage: storage }).single('image'),
   async (req, res) => {
     const file = req.file;
@@ -136,6 +138,7 @@ router.post('/getArticle', async (req, res) => {
 router.post(
   '/editArticle',
   auth,
+  adminAuth,
   multer({ storage: storage }).single('image'),
   async (req, res) => {
     const file = req.file;
@@ -200,7 +203,7 @@ router.post(
   }
 );
 
-router.post('/deleteArticle', auth, async (req, res) => {
+router.post('/deleteArticle', auth, adminAuth, async (req, res) => {
   try {
     const article = await Article.findByIdAndDelete(req.body._id);
     if (!article) {
@@ -217,7 +220,7 @@ router.post('/deleteArticle', auth, async (req, res) => {
   }
 });
 
-router.post('/deleteArticleFile', auth, async (req, res) => {
+router.post('/deleteArticleFile', auth, adminAuth, async (req, res) => {
   const public_id = req.body.public_id;
   try {
     const article = await Article.findByIdAndUpdate(req.body._id, {

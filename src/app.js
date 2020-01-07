@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 var cors = require('cors');
+const compression = require('compression');
 
 require('./database/mongoose');
 
@@ -25,6 +26,8 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
+app.use(compression());
+
 app.use('/images', express.static(path.join('images')));
 app.use('/fileToUpload', express.static(path.join('fileToUpload')));
 app.use(bodyParser.urlencoded({ extended: false }));

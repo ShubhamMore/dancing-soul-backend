@@ -2,6 +2,7 @@ const multer = require('multer');
 const express = require('express');
 
 const auth = require('../middleware/auth');
+const adminAuth = require('../middleware/admin-auth');
 
 const awsRemoveFile = require('../uploads/awsRemoveFile');
 const awsUploadFiles = require('../uploads/awsUploadFiles');
@@ -46,6 +47,7 @@ const router = new express.Router();
 router.post(
   '/addBranch',
   auth,
+  adminAuth,
   multer({ storage: storage }).array('image'),
   async (req, res) => {
     const images = new Array();
@@ -115,7 +117,7 @@ router.post(
   }
 );
 
-router.post('/getBranches', auth, async (req, res) => {
+router.post('/getBranches', auth, adminAuth, async (req, res) => {
   try {
     const branches = await Branch.find();
     if (!branches) {
@@ -143,7 +145,7 @@ router.post('/getActivateBranches', async (req, res) => {
   }
 });
 
-router.post('/getBranch', auth, async (req, res) => {
+router.post('/getBranch', auth, adminAuth, async (req, res) => {
   try {
     const branch = await Branch.findById(req.body._id);
     if (!branch) {
@@ -160,6 +162,7 @@ router.post('/getBranch', auth, async (req, res) => {
 router.post(
   '/editBranch',
   auth,
+  adminAuth,
   multer({ storage: storage }).array('image'),
   async (req, res) => {
     let images = new Array();
@@ -239,7 +242,7 @@ router.post(
   }
 );
 
-router.post('/changeBranchStatus', auth, async (req, res) => {
+router.post('/changeBranchStatus', auth, adminAuth, async (req, res) => {
   try {
     const branch = await Branch.findByIdAndUpdate(req.body._id, {
       status: req.body.status
@@ -258,7 +261,7 @@ router.post('/changeBranchStatus', auth, async (req, res) => {
   }
 });
 
-router.post('/deleteBranchImage', auth, async (req, res) => {
+router.post('/deleteBranchImage', auth, adminAuth, async (req, res) => {
   const public_id = req.body.public_id;
   try {
     const branch = await Branch.findById(req.body._id);
@@ -289,7 +292,7 @@ router.post('/deleteBranchImage', auth, async (req, res) => {
   }
 });
 
-router.post('/deleteBranch', auth, async (req, res) => {
+router.post('/deleteBranch', auth, adminAuth, async (req, res) => {
   try {
     const user = await User.findByCredentials(
       req.user.email,

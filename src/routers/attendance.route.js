@@ -1,5 +1,6 @@
 const express = require('express');
 const auth = require('../middleware/auth');
+const adminAuth = require('../middleware/admin-auth');
 const Attendance = require('../model/attendance.model');
 const Student = require('../model/student.model');
 const router = new express.Router();
@@ -28,7 +29,7 @@ router.post('/getStudentsForAttendance', auth, async (req, res) => {
   }
 });
 
-router.post('/saveAttendance', auth, async (req, res) => {
+router.post('/saveAttendance', auth, adminAuth, async (req, res) => {
   try {
     let attendance = await Attendance.findOne({
       branch: req.body.branch,
