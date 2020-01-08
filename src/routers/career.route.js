@@ -6,6 +6,7 @@ const adminAuth = require('../middleware/admin-auth');
 const Career = require('../model/career.model');
 
 const awsUploadFiles = require('../uploads/awsUploadFiles');
+const awsRemoveFile = require('../uploads/awsRemoveFile');
 
 const MIME_TYPE_MAP = {
   // PDF
@@ -124,6 +125,28 @@ router.post('/getCareer', auth, adminAuth, async (req, res) => {
       throw new Error('No Career found');
     }
     res.status(200).send(career);
+  } catch (e) {
+    const err = 'Something bad happen, ' + e;
+    res.status(400).send(err.replace('Error: ', ''));
+  }
+});
+
+router.post('/deleteCareer', auth, adminAuth, async (req, res) => {
+  try {
+    const career = await Career.findByIdAndDelete(req.body._id);
+    if (!career) {
+      throw new Error('No Career found');
+    }
+
+    if (career.coverLatter.public_id) {
+      await awsRemoveFile(career.coverLatter.public_id);
+    }
+
+    if (career.resume.public_id) {
+      await awsRemoveFile(career.coverLatter.public_id);
+    }
+
+    res.status(200).send({ success: true });
   } catch (e) {
     const err = 'Something bad happen, ' + e;
     res.status(400).send(err.replace('Error: ', ''));
