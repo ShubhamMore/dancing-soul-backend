@@ -4,7 +4,7 @@ const multer = require('multer');
 const auth = require('../middleware/auth');
 const adminAuth = require('../middleware/admin-auth');
 const Career = require('../model/career.model');
-
+const sortArrayOfObjectsById = require('../shared/sortArrayOfObjectsById');
 const awsUploadFiles = require('../uploads/awsUploadFiles');
 const awsRemoveFile = require('../uploads/awsRemoveFile');
 
@@ -109,7 +109,7 @@ router.post(
 
 router.post('/getCareers', auth, adminAuth, async (req, res) => {
   try {
-    const careers = await Career.find();
+    const careers = await sortArrayOfObjectsById(await Career.find(), '_id');
 
     res.status(200).send(careers);
   } catch (e) {

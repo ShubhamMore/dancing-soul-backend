@@ -3,7 +3,7 @@ const auth = require('../middleware/auth');
 const adminAuth = require('../middleware/admin-auth');
 const Enquiry = require('../model/enquiry.model');
 const sendMail = require('../mail/mail');
-
+const sortArrayOfObjectsById = require('../shared/sortArrayOfObjectsById');
 const router = new express.Router();
 
 router.post('/sendEnquiry', async (req, res) => {
@@ -59,9 +59,6 @@ router.post('/replyEnquiry', auth, adminAuth, async (req, res) => {
 router.post('/getUnseenEnquiries', auth, adminAuth, async (req, res) => {
   try {
     const enquiries = await Enquiry.find({ seen: '0' });
-    if (!enquiries) {
-      throw new Error('No Enquiry Found');
-    }
 
     res.status(200).send({ unseenEnquiries: enquiries.length });
   } catch (e) {
@@ -72,10 +69,7 @@ router.post('/getUnseenEnquiries', auth, adminAuth, async (req, res) => {
 
 router.post('/getEnquiries', auth, adminAuth, async (req, res) => {
   try {
-    const enquiries = await Enquiry.find();
-    if (!enquiries) {
-      throw new Error('No Enquiry Found');
-    }
+    const enquiries = await sortArrayOfObjectsById(await Enquiry.find(), '_id');
 
     res.status(200).send(enquiries);
   } catch (e) {

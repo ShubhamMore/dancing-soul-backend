@@ -20,6 +20,10 @@ const enquirySchema = new mongoose.Schema({
   seen: {
     type: String,
     required: true
+  },
+  date: {
+    type: String,
+    default: Date.now().toString()
   }
 });
 const Enquiry = mongoose.model('Enquiry', enquirySchema);

@@ -17,6 +17,10 @@ const careerSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  date: {
+    type: String,
+    default: Date.now().toString()
+  },
   coverLatter: {
     file_name: {
       type: String
