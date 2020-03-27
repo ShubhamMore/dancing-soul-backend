@@ -132,13 +132,11 @@ router.post('/removeCertificate', auth, async (req, res) => {
 
     images = certificate.certificateImages;
 
-    const responce = await awsRemoveFile(req.body.public_id);
+    await awsRemoveFile(req.body.public_id);
 
-    if (responce.result == 'ok') {
-      const index = findIndexByKey(images, 'public_id', req.body.public_id);
-      if (index !== null) {
-        images.splice(index, 1);
-      }
+    const index = findIndexByKey(images, 'public_id', req.body.public_id);
+    if (index !== null) {
+      images.splice(index, 1);
     }
 
     const certificateData = {

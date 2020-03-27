@@ -4,3 +4,5 @@ images/*
 !images/.gitkeep
 fileToUpload/*
 !fileToUpload/.gitkeep
+log/*
+!log/.gitkeep

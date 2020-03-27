@@ -112,6 +112,38 @@ router.post('/getIdentity', auth, async (req, res) => {
   }
 });
 
+router.post('/removeIdentity', auth, async (req, res) => {
+  try {
+    const identity = await Identity.findById(req.body._id);
+
+    if (!identity) {
+      throw new Error('No Identity Found');
+    }
+
+    images = identity.identityImages;
+
+    await awsRemoveFile(req.body.public_id);
+
+    const index = findIndexByKey(images, 'public_id', req.body.public_id);
+    if (index !== null) {
+      images.splice(index, 1);
+    }
+
+    const identityData = {
+      _id: identity._id,
+      student: identity.student,
+      identityImages: images
+    };
+
+    await Identity.findByIdAndUpdate(identityData._id, identityData);
+
+    res.status(200).send({ success: true });
+  } catch (e) {
+    const err = 'Something bad happen, ' + e;
+    res.status(400).send(err.replace('Error: ', ''));
+  }
+});
+
 router.post(
   '/updateIdentity',
   auth,
@@ -170,25 +202,22 @@ router.post(
 
               public_ids.forEach(public_id => {
                 if (
-                  public_id.split('-')[0] ==
-                  upload_res[i].public_id.split('-')[0]
+                  public_id.split('-')[0] == img_data.public_id.split('-')[0]
                 ) {
                   public_id_to_remove = public_id;
                 }
               });
 
               if (public_id_to_remove) {
-                const res = await awsRemoveFile(public_id_to_remove);
+                await awsRemoveFile(public_id_to_remove);
 
-                if (res.result == 'ok') {
-                  const index = findIndexByKey(
-                    images,
-                    'public_id',
-                    public_id_to_remove
-                  );
-                  if (index !== null) {
-                    images.splice(index, 1);
-                  }
+                const index = findIndexByKey(
+                  images,
+                  'public_id',
+                  public_id_to_remove
+                );
+                if (index !== null) {
+                  images.splice(index, 1);
                 }
               }
             }
