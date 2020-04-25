@@ -6,11 +6,15 @@ const router = new express.Router();
 
 router.post('/saveContent', auth, adminAuth, async (req, res) => {
   try {
+    const newContent = {
+      content: req.body.content.replace(/&lt;/g, '<').replace(/&gt;/g, '>'),
+      careerContent: req.body.careerContent.replace(/&lt;/g, '<').replace(/&gt;/g, '>'),
+    };
     let content = await Content.findById(req.body._id);
     if (content) {
-      await Content.findByIdAndUpdate(req.body._id, req.body);
+      await Content.findByIdAndUpdate(req.body._id, newContent);
     } else {
-      content = new Content(req.body);
+      content = new Content(newContent);
       await content.save();
     }
     res.status(200).send({ success: true });

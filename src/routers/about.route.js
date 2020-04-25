@@ -30,7 +30,12 @@ router.post('/getAbout', async (req, res) => {
 
 router.post('/saveAbout', auth, adminAuth, async (req, res) => {
   try {
-    const about = await About.findByIdAndUpdate(req.body._id, req.body);
+    const newAbout = {
+      aim: req.body.aim.replace(/&lt;/g, '<').replace(/&gt;/g, '>'),
+      history: req.body.history.replace(/&lt;/g, '<').replace(/&gt;/g, '>'),
+      philosophy: req.body.philosophy.replace(/&lt;/g, '<').replace(/&gt;/g, '>'),
+    };
+    const about = await About.findByIdAndUpdate(req.body._id, newAbout);
     if (!about) {
       throw new Error('No About Info Found');
     }
