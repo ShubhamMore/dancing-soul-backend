@@ -14,7 +14,7 @@ const MIME_TYPE_MAP = {
   // IMAGES
   'image/png': 'png',
   'image/jpeg': 'jpg',
-  'image/jpg': 'jpg'
+  'image/jpg': 'jpg',
 };
 
 const storage = multer.diskStorage({
@@ -27,13 +27,10 @@ const storage = multer.diskStorage({
     cb(error, 'fileToUpload');
   },
   filename: (req, file, cb) => {
-    const name = file.originalname
-      .toLowerCase()
-      .split(' ')
-      .join('-');
+    const name = file.originalname.toLowerCase().split(' ').join('-');
     const ext = MIME_TYPE_MAP[file.mimetype];
     cb(null, name + '-' + Date.now() + '.' + ext);
-  }
+  },
 });
 
 const router = new express.Router();
@@ -57,11 +54,7 @@ router.post(
         const cloudeDirectory = 'articles';
 
         try {
-          const upload_responce = await awsUploadFile(
-            filePath,
-            fileName,
-            cloudeDirectory
-          );
+          const upload_responce = await awsUploadFile(filePath, fileName, cloudeDirectory);
 
           const upload_res = upload_responce.upload_res;
 
@@ -72,7 +65,7 @@ router.post(
               public_id: upload_res.key,
               created_at: Date.now(),
               width: upload_res.size.width,
-              height: upload_res.size.height
+              height: upload_res.size.height,
             };
             fileData = file_data;
           }
@@ -83,8 +76,8 @@ router.post(
 
       const articleData = {
         title: data.title,
-        body: data.body,
-        file: fileData
+        body: data.body.replace(/&lt;/g, '<').replace(/&gt;/g, '>'),
+        file: fileData,
       };
 
       const article = new Article(articleData);
@@ -163,11 +156,7 @@ router.post(
         const cloudeDirectory = 'articles';
 
         try {
-          const upload_responce = await awsUploadFile(
-            filePath,
-            fileName,
-            cloudeDirectory
-          );
+          const upload_responce = await awsUploadFile(filePath, fileName, cloudeDirectory);
 
           const upload_res = upload_responce.upload_res;
 
@@ -178,7 +167,7 @@ router.post(
               public_id: upload_res.key,
               created_at: Date.now(),
               width: upload_res.size.width,
-              height: upload_res.size.height
+              height: upload_res.size.height,
             };
             fileData = file_data;
           }
@@ -189,8 +178,8 @@ router.post(
       const articleData = {
         _id: data._id,
         title: data.title,
-        body: data.body,
-        file: fileData
+        body: data.body.replace(/&lt;/g, '<').replace(/&gt;/g, '>'),
+        file: fileData,
       };
 
       await Article.findByIdAndUpdate(data._id, articleData);
@@ -224,7 +213,7 @@ router.post('/deleteArticleFile', auth, adminAuth, async (req, res) => {
   const public_id = req.body.public_id;
   try {
     const article = await Article.findByIdAndUpdate(req.body._id, {
-      file: null
+      file: null,
     });
     if (!article) {
       throw new Error('No Article Found');
